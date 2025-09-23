@@ -65,6 +65,7 @@
     "index.js",
     "components/",
     "constants/",
+    "utils/",
     "examples/",
     "README.md"
   ]
