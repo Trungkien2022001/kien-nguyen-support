@@ -1,75 +1,17 @@
 module.exports = {
   env: {
     browser: true,
-    es2021: true,
+    es6: true,
     node: true,
   },
   extends: [
     'eslint:recommended',
   ],
   parserOptions: {
-    ecmaVersion: 'latest',
+    ecmaVersion: 2020,
     sourceType: 'module',
   },
-  plugins: [
-    'spellcheck',
-  ],
   rules: {
-    // Spell check rules
-    'spellcheck/spell-checker': [
-      'warn',
-      {
-        comments: true,
-        strings: true,
-        identifiers: true,
-        lang: 'en_US',
-        skipWords: [
-          'eslint',
-          'nodejs',
-          'javascript',
-          'kien',
-          'nguyen',
-          'trungkien',
-          'utils',
-          'async',
-          'await',
-          'const',
-          'typeof',
-          'instanceof',
-          'undefined',
-          'mongodb',
-          'api',
-          'json',
-          'config',
-          'env',
-          'dev',
-          'prod',
-          'str',
-          'obj',
-          'param',
-          'params',
-          'req',
-          'res',
-          'err',
-          'ctx',
-          'idx',
-          'url',
-          'uri',
-          'uuid',
-          'regex',
-          'npm',
-          'repo',
-          'github'
-        ],
-        skipIfMatch: [
-          'http://[^s]*',
-          'https://[^s]*',
-          '^[-\\w]+/[-\\w\\.]+$', // relative file paths
-        ],
-        minLength: 3,
-      },
-    ],
-    
     // Code quality rules
     'no-unused-vars': 'warn',
     'no-console': 'warn',
