@@ -1,6 +1,6 @@
 {
   "name": "kien-nguyen-support",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Utilities package for logging, telegram alerts, and webhook management",
   "main": "index.js",
   "scripts": {
