@@ -2,50 +2,23 @@
 // A comprehensive utilities package for logging, telegram alerts, and webhook management
 
 // Import all components
-const { saveProviderLog, saveProviderCurl } = require('./components/logs/log');
-const telegram = require('./components/telegram');
-
-// Package metadata
-const packageInfo = {
-  name: 'kien-nguyen-support',
-  version: '1.0.0',
-  description: 'Utilities package for logging, telegram alerts, and webhook management',
-  author: 'nguyenkien2022001@gmail.com',
-};
+const {
+    saveProviderLog,
+    saveProviderCurl
+} = require('./components/third-party-logs/log')
+const { TelegramClient } = require('./components/telegram-bot')
+const { createTelegramWebhookClient } = require('./components/telegram-webhook')
 
 // Main exports
 module.exports = {
+    // 🚀 MAIN FACTORY EXPORTS - This is what most people will use
+    TelegramClient,
+    createTelegramWebhookClient,
 
-  // Telegram functions
-  telegram: {
-    // Alert functions
-    sendMessage: telegram.sendMessage,
-    sendErrorAlert: telegram.sendErrorAlert,
-    sendStartupNotification: telegram.sendStartupNotification,
-    sendCustomNotification: telegram.sendCustomNotification,
-    buildMessageText: telegram.buildMessageText,
-    determineMessageThread: telegram.determineMessageThread,
-
-    // Webhook functions
-    setWebhook: telegram.setWebhook,
-    deleteWebhook: telegram.deleteWebhook,
-    getWebhookInfo: telegram.getWebhookInfo,
-    getUpdates: telegram.getUpdates,
-    initializeTelegram: telegram.initializeTelegram,
-    startPolling: telegram.startPolling,
-  },
-
-  // Direct exports for convenience (most commonly used functions)
-  saveProviderLog: saveProviderLog,
-  saveProviderCurl: saveProviderCurl,
-  sendMessage: telegram.sendMessage,
-  sendErrorAlert: telegram.sendErrorAlert,
-  sendStartupNotification: telegram.sendStartupNotification,
-  initializeTelegram: telegram.initializeTelegram,
-  setWebhook: telegram.setWebhook,
-  deleteWebhook: telegram.deleteWebhook,
-  startPolling: telegram.startPolling,
-};
+    // Logging utilities
+    saveProviderLog,
+    saveProviderCurl
+}
 
 // Support both CommonJS and ES6 imports
-module.exports.default = module.exports;
+module.exports.default = module.exports

@@ -9,7 +9,6 @@ function tryParseJson(text) {
     return json
 }
 
-
 module.exports = {
     tryParseJson
 }

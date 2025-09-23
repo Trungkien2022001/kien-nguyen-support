@@ -8,30 +8,19 @@ A comprehensive utilities package for logging, Telegram alerts, and webhook mana
 npm install kien-nguyen-support
 ```
 
-## Features
+## 3 Core Features
 
-- 📝 **Provider Logging**: Save API request/response logs and curl commands
-- 🚨 **Telegram Alerts**: Send error alerts and notifications to Telegram
-- 🔗 **Webhook Management**: Setup and manage Telegram webhooks with polling fallback
-- 🏗️ **Multi-Product Support**: Support for hotel, flight, tour, and transfer products
-- 📱 **Smart Thread Routing**: Automatic message routing to appropriate Telegram threads
+- 📝 **Third-Party Log**: Save HTTP request/response logs and curl commands
+- 🚨 **Telegram Bot**: Alert notifications with smart thread routing
+- 🔗 **Telegram Webhook**: Production webhook management with fallback
 
 ## Quick Start
 
 ```javascript
-const support = require('kien-nguyen-support')
+const { TelegramClient, saveProviderLog, createTelegramWebhookClient } = require('kien-nguyen-support')
 
-// or import specific modules
-const { saveProviderLog, sendErrorAlert, initializeTelegram } = require('kien-nguyen-support')
-```
-
-## Logging
-
-### Save Provider Logs
-
-```javascript
-// Save API request/response logs
-await support.saveProviderLog({
+// Feature 1: Third-Party Logging
+await saveProviderLog({
     action: 'search',
     req: requestData,
     res: responseData,
@@ -39,143 +28,370 @@ await support.saveProviderLog({
     name: 'search-hotels'
 })
 
-// Save curl commands
-await support.saveProviderCurl({
-    name: 'search-hotels',
-    request: requestObject,
-    code: 'EXPEDIA',
-    action: 'search'
+// Feature 2: Telegram Bot
+const telegram = new TelegramClient({
+    botToken: process.env.TELEGRAM_BOT_TOKEN,
+    chatId: process.env.TELEGRAM_CHAT_ID,
+    messageThreadIds: { /* thread config */ }
+})
+await telegram.sendErrorAlert({ error_message: 'Hello!' })
+
+// Feature 3: Telegram Webhook
+const webhook = createTelegramWebhookClient({ /* config */ })
+await webhook.setWebhook()
+```
+
+## Feature 1: Third-Party Log (HTTP Request Logging)
+
+Save API request/response logs and curl commands to organized files:
+
+```javascript
+const { saveProviderLog, saveProviderCurl } = require('kien-nguyen-support')
+
+// Save request/response logs
+await saveProviderLog({
+    action: 'search',           // Action name
+    req: requestData,           // Request object/string (JSON or XML)
+    res: responseData,          // Response object/string (JSON or XML)
+    code: 'EXPEDIA',           // Provider/supplier code
+    name: 'search-hotels'      // Operation name
+})
+
+// Save curl command for debugging
+await saveProviderCurl({
+    name: 'search-hotels',     // Operation name
+    request: {                 // Request object
+        method: 'POST',
+        url: 'https://api.expedia.com/search',
+        headers: { 'Content-Type': 'application/json' },
+        body: { destination: 'Bangkok' }
+    },
+    code: 'EXPEDIA',          // Provider code
+    action: 'search'          // Action name (optional)
 })
 ```
 
-## Telegram Alerts
+**Files are automatically saved to:**
+- Request/Response: `../logs/logs_YYYY-MM-DD/TIMESTAMP_CODE_NAME_ACTION_req.json`
+- Curl commands: `../curl_logs/logs_YYYY-MM-DD/TIMESTAMP_CODE_NAME_ACTION_curl.txt`
 
-### Send Error Alerts
+## Feature 2: Telegram Bot (Alert & Messaging)
+
+### TelegramClient Class (Recommended)
+
+Pre-configured client with smart thread routing:
 
 ```javascript
-// Hotel error alert
-await support.sendErrorAlert({
-    botToken: 'your-bot-token',
-    chatId: 'your-chat-id',
-    messageThreadIds: config.message_thread_id,
-    product: 'hotel',
-    environment: 'PROD',
-    type: 'third_party',
-    errorCode: 'BOOKING_FAILED',
-    errorMessage: 'Failed to book hotel room',
-    metric: 'offer_book',
-    user: 'user@example.com',
-    supplierCode: 'EXPEDIA'
+const { TelegramClient } = require('kien-nguyen-support')
+
+/**
+ * Initialize TelegramClient
+ * Required config:
+ * - botToken: Telegram bot token
+ * - chatId: Chat ID to send messages to
+ * 
+ * Optional config:
+ * - product: Default product type (hotel, flight, tour, transfer)
+ * - environment: Default environment (DEV, STAGING, PROD)
+ * - messageThreadIds: Thread routing configuration
+ * - disableNotification: Disable notifications (default: false)
+ * - timeout: Request timeout in ms (default: 5000)
+ */
+const telegram = new TelegramClient({
+    botToken: process.env.TELEGRAM_BOT_TOKEN,     // Required
+    chatId: process.env.TELEGRAM_CHAT_ID,        // Required
+    product: 'hotel',                            // Optional
+    environment: 'PROD',                         // Optional
+    messageThreadIds: {                          // Optional - for smart routing
+        general: 9,
+        hotel_system_search: 19,
+        hotel_system_book: 23,
+        hotel_third_party_search: 30,
+        hotel_third_party_book: 34,
+        flight_system_search: 41,
+        // ... more thread IDs
+    },
+    disableNotification: false,                  // Optional
+    timeout: 10000                              // Optional
 })
 
-// Flight error alert
-await support.sendErrorAlert({
-    botToken: 'your-bot-token',
-    chatId: 'your-chat-id',
-    messageThreadIds: config.message_thread_id,
-    product: 'flight',
-    environment: 'PROD',
-    type: 'system',
-    errorCode: 'PNR_GENERATION_FAILED',
-    errorMessage: 'Failed to generate PNR',
-    metric: 'generate_pnr',
-    user: 'user@example.com'
+/**
+ * Send message - options parameter structure
+ * Required: error_message
+ * Optional: All other fields for metadata and routing
+ */
+await telegram.sendMessage({
+    error_message: 'Hello World!'               // Required - message text
+})
+
+/**
+ * Send error alert with auto thread routing
+ * Thread routing: product_type_metric → general fallback
+ */
+await telegram.sendErrorAlert({
+    // Core error info
+    error_message: 'Failed to book hotel',      // Required
+    error_code: 'BOOKING_FAILED',               // Optional
+    
+    // Routing (auto-detects thread)
+    type: 'third_party',                        // 'system' or 'third_party'
+    metric: 'book',                            // For thread routing
+    
+    // Context (optional)
+    user_email: 'user@example.com',
+    supplier: {
+        code: 'EXPEDIA',
+        id: 123,
+        source_id: 'EXP001'
+    },
+    request_metadata: { bookingId: 'ABC123' },  // Object or string
+    error_stack: error.stack,                   // Auto-truncated to 2 lines
+    metadata: { additional: 'data' }           // Any extra metadata
 })
 ```
 
-### Send Custom Notifications
+### Factory Function (Alternative)
 
 ```javascript
-// Startup notification
-await support.sendStartupNotification({
-    botToken: 'your-bot-token',
-    chatId: 'your-chat-id',
-    environment: 'PROD',
-    serviceName: 'Hotel API',
-    version: '2.1.0'
+const { createTelegramClient } = require('kien-nguyen-support')
+
+const telegramClient = createTelegramClient({
+    botToken: process.env.TELEGRAM_BOT_TOKEN,
+    chatId: process.env.TELEGRAM_CHAT_ID,
+    messageThreadIds: { /* thread config */ }
 })
 
-// Custom notification
-await support.sendCustomNotification({
-    botToken: 'your-bot-token',
-    chatId: 'your-chat-id',
-    title: 'Deployment Complete',
-    message: 'New version deployed successfully',
-    icon: '🚀',
-    environment: 'PROD'
-})
+await telegramClient.sendMessage({ error_message: 'Hello!' })
 ```
 
-## Webhook Management
+## Feature 3: Telegram Webhook (Production Setup)
 
-### Initialize Telegram
-
-```javascript
-// Auto webhook with polling fallback
-const result = await support.initializeTelegram({
-    botToken: 'your-bot-token',
-    webhookUrl: 'https://your-domain.com/webhook',
-    onUpdate: (update) => {
-        console.log('Received update:', update)
-    }
-})
-
-// Force polling mode
-const result = await support.initializeTelegram({
-    botToken: 'your-bot-token',
-    usePolling: true,
-    onUpdate: async (update) => {
-        // Handle telegram update
-        if (update.message) {
-            console.log('New message:', update.message.text)
-        }
-    }
-})
-```
-
-### Manual Webhook Setup
+Manage webhooks for production deployment:
 
 ```javascript
+const { createTelegramWebhookClient } = require('kien-nguyen-support')
+
+/**
+ * Initialize webhook client
+ * Required config:
+ * - botToken: Telegram bot token
+ * - webhookUrl: URL for webhook endpoint
+ * 
+ * Optional config:
+ * - secretToken: Secret token for verification
+ * - allowedUpdates: Array of update types to receive
+ * - maxConnections: Max simultaneous connections
+ * - timeout: Request timeout in ms
+ */
+const webhookClient = createTelegramWebhookClient({
+    botToken: process.env.TELEGRAM_BOT_TOKEN,    // Required
+    webhookUrl: process.env.WEBHOOK_URL,         // Required
+    secretToken: process.env.WEBHOOK_SECRET_TOKEN, // Optional but recommended
+    allowedUpdates: ['message', 'callback_query'], // Optional
+    maxConnections: 100,                         // Optional
+    timeout: 10000                              // Optional
+})
+
 // Set webhook
-await support.setWebhook({
-    botToken: 'your-bot-token',
-    webhookUrl: 'https://your-domain.com/webhook',
-    allowedUpdates: ['message', 'callback_query'],
-    maxConnections: 100
-})
-
-// Delete webhook
-await support.deleteWebhook({
-    botToken: 'your-bot-token',
-    dropPendingUpdates: true
-})
+await webhookClient.setWebhook()
 
 // Get webhook info
-const info = await support.getWebhookInfo({
-    botToken: 'your-bot-token'
+const info = await webhookClient.getWebhookInfo()
+console.log('Webhook status:', info.url)
+
+// Delete webhook
+await webhookClient.deleteWebhook()
+
+// Verify incoming webhook requests
+app.post('/telegram-webhook', (req, res) => {
+    const secretToken = req.headers['x-telegram-bot-api-secret-token']
+    
+    if (!webhookClient.verifyRequest(secretToken)) {
+        return res.status(401).send('Unauthorized')
+    }
+    
+    const update = webhookClient.parseUpdate(req.body)
+    if (update.message) {
+        console.log('Received message:', update.message.text)
+    }
+    
+    res.sendStatus(200)
 })
 ```
 
-### Manual Polling
+## Smart Thread Routing
+
+Configure automatic message routing to specific Telegram threads:
 
 ```javascript
-// Start polling
-const polling = support.startPolling({
-    botToken: 'your-bot-token',
-    onUpdate: async (update) => {
-        // Handle update
-        console.log('Update received:', update)
-    },
-    onError: (error) => {
-        console.error('Polling error:', error)
-    },
-    interval: 30000, // 30 seconds
-    timeout: 10000   // 10 seconds
+const messageThreadIds = {
+    // General fallback
+    general: 9,
+    
+    // Hotel system
+    hotel_system_search: 19,
+    hotel_system_book: 23,
+    
+    // Hotel third-party
+    hotel_third_party_search: 30,
+    hotel_third_party_book: 34,
+    
+    // Flight system
+    flight_system_search: 41,
+    flight_system_book: 43,
+    
+    // Tour/Transfer
+    tour_system_search: 51,
+    transfer_system_book: 73
+}
+```
+
+**Routing Logic**: `{product}_{type}_{metric}` → Falls back to `general`
+
+Examples:
+- `hotel` + `third_party` + `book` → `hotel_third_party_book` (34)
+- `flight` + `system` + `search` → `flight_system_search` (41)
+- Unknown combination → `general` (9)
+
+## Usage Patterns
+
+### Pattern 1: Pre-configured Client (Recommended)
+
+Create a shared client for your entire project:
+
+```javascript
+// config/telegram-client.js
+const { TelegramClient } = require('kien-nguyen-support')
+
+const telegramClient = new TelegramClient({
+    botToken: process.env.TELEGRAM_BOT_TOKEN,
+    chatId: process.env.TELEGRAM_CHAT_ID,
+    messageThreadIds: { /* your threads */ },
+    environment: process.env.NODE_ENV || 'STAGING'
 })
 
-// Stop polling when needed
-polling.stop()
+module.exports = telegramClient
+
+// services/hotel-service.js
+const telegram = require('../config/telegram-client')
+
+async function bookHotel(hotelData) {
+    try {
+        const booking = await processHotelBooking(hotelData)
+        await telegram.sendMessage({
+            error_message: `✅ Hotel booking success: ${booking.id}`
+        })
+        return booking
+    } catch (error) {
+        await telegram.sendErrorAlert({
+            type: 'third_party',
+            error_code: 'BOOKING_FAILED',
+            error_message: error.message,
+            metric: 'book',
+            user_email: hotelData.userEmail
+        })
+        throw error
+    }
+}
 ```
+
+### Pattern 2: Service-Specific Clients
+
+```javascript
+// services/flight-service.js
+const { TelegramClient } = require('kien-nguyen-support')
+
+const flightTelegram = new TelegramClient({
+    botToken: process.env.TELEGRAM_BOT_TOKEN,
+    chatId: process.env.FLIGHT_CHAT_ID, // Different chat
+    product: 'flight',
+    messageThreadIds: {
+        flight_system_search: 31,
+        flight_system_book: 33,
+    },
+    disableNotification: true,
+})
+
+async function searchFlights(searchData) {
+    await flightTelegram.sendMessage({
+        error_message: '🔍 Searching flights...'
+    })
+    // ... business logic
+}
+```
+
+## API Reference
+
+### Third-Party Logging
+
+#### `saveProviderLog(options)`
+Save HTTP request/response logs to organized files.
+
+**Parameters:**
+- `action` (string): Action name (e.g., 'search', 'book')
+- `req` (Object|string): Request data (JSON object or XML string)
+- `res` (Object|string): Response data (JSON object or XML string)
+- `code` (string): Provider/supplier code (e.g., 'EXPEDIA')
+- `name` (string): Operation name (e.g., 'search-hotels')
+
+#### `saveProviderCurl(options)`
+Save curl command to file for debugging.
+
+**Parameters:**
+- `name` (string): Operation name
+- `request` (Object): Request object with method, url, headers, body
+- `code` (string): Provider/supplier code
+- `action` (string, optional): Action name
+
+### TelegramClient Class
+
+#### `new TelegramClient(config)`
+Create a Telegram client instance.
+
+**Config Parameters:**
+- `botToken` (string, required): Telegram bot token
+- `chatId` (string, required): Chat ID to send messages to
+- `product` (string, optional): Default product type ('hotel', 'flight', 'tour', 'transfer')
+- `environment` (string, optional): Default environment ('DEV', 'STAGING', 'PROD')
+- `messageThreadIds` (Object, optional): Thread routing configuration
+- `disableNotification` (boolean, optional): Disable notifications (default: false)
+- `timeout` (number, optional): Request timeout in ms (default: 5000)
+
+#### `telegram.sendMessage(options)`
+Send message using error-handler.js style options parameter.
+
+**Options Parameters:**
+- `error_message` (string, required): Message text to send
+- `type` (string, optional): Alert type ('system', 'third_party')
+- `metric` (string, optional): Metric for thread routing
+- All other fields are optional and used for metadata
+
+#### `telegram.sendErrorAlert(options)`
+Send error alert with automatic thread routing.
+
+**Options Parameters:**
+- `error_message` (string, required): Error message
+- `error_code` (string, optional): Error code
+- `type` (string, optional): 'system' or 'third_party' (default: 'system')
+- `metric` (string, optional): Metric for thread routing (default: 'general')
+- `user_email` (string, optional): User email
+- `supplier` (Object, optional): Supplier info with code, id, etc.
+- `request_metadata` (Object|string, optional): Request metadata
+- `error_stack` (string, optional): Error stack trace (auto-truncated)
+- `metadata` (Object|string, optional): Additional metadata
+
+### Webhook Client
+
+#### `createTelegramWebhookClient(config)`
+Create a webhook client for production.
+
+**Config Parameters:**
+- `botToken` (string, required): Telegram bot token
+- `webhookUrl` (string, required): Webhook URL
+- `secretToken` (string, optional): Secret token for verification
+- `allowedUpdates` (Array, optional): Update types to receive
+- `maxConnections` (number, optional): Max connections
+- `timeout` (number, optional): Request timeout
 
 ## Multi-Product Support
 
@@ -189,143 +405,10 @@ The package supports multiple products with automatic thread routing:
 
 ### Supported Metrics
 
-**Hotel**: `offer_search`, `search_by_region`, `search_by_id`, `prebook`, `offer_book`, `book`, `cancel`
-
-**Flight**: `search`, `confirm_tax`, `generate_pnr`, `generate_eticket`, `retrieve_pnr`, `retrieve`, `cancel`
-
+**Hotel**: `search`, `prebook`, `book`, `cancel`
+**Flight**: `search`, `confirm_tax`, `generate_pnr`, `generate_eticket`, `cancel`
 **Tour**: `search`, `book`, `cancel`
-
 **Transfer**: `search`, `book`, `cancel`
-
-## Configuration
-
-### Telegram Thread Configuration
-
-```javascript
-const config = {
-    telegramAlert: {
-        botToken: process.env.TELEGRAM_BOT_TOKEN,
-        chatId: process.env.TELEGRAM_CHAT_ID,
-        message_thread_id: {
-            general: 1,
-            
-            // Hotel threads
-            hotel_system_search: 11,
-            hotel_system_book: 13,
-            hotel_third_party_search: 21,
-            hotel_third_party_book: 23,
-            
-            // Flight threads  
-            flight_system_search: 31,
-            flight_system_generate_pnr: 33,
-            flight_third_party_search: 41,
-            flight_third_party_generate_pnr: 43,
-            
-            // Tour threads
-            tour_system_search: 51,
-            tour_system_book: 52,
-            
-            // Transfer threads
-            transfer_system_search: 71,
-            transfer_system_book: 72
-            
-            // ... more thread IDs
-        }
-    }
-}
-```
-
-## Constants
-
-Access predefined constants:
-
-```javascript
-const { constants } = require('kien-nguyen-support')
-
-// Products
-constants.TELEGRAM.PRODUCTS.HOTEL     // 'hotel'
-constants.TELEGRAM.PRODUCTS.FLIGHT    // 'flight'
-
-// Error types
-constants.TELEGRAM.ERROR_TYPES.THIRD_PARTY  // 'third_party'
-constants.TELEGRAM.ERROR_TYPES.SYSTEM       // 'system'
-
-// Metrics
-constants.TELEGRAM.METRICS.HOTEL.OFFER_SEARCH    // 'offer_search'
-constants.TELEGRAM.METRICS.FLIGHT.GENERATE_PNR   // 'generate_pnr'
-
-// File extensions
-constants.FILE_EXTENSIONS.JSON  // 'json'
-constants.FILE_EXTENSIONS.XML   // 'xml'
-```
-
-## API Reference
-
-### Logging Functions
-
-#### `saveProviderLog(options)`
-Save API request/response logs to files.
-
-**Parameters:**
-- `action` (string): Action name
-- `req` (Object): Request data
-- `res` (Object): Response data  
-- `code` (string): Provider/supplier code
-- `name` (string): Operation name
-
-#### `saveProviderCurl(options)`
-Save curl command to file.
-
-**Parameters:**
-- `name` (string): Operation name
-- `request` (Object): Request object with method, url, headers, body
-- `code` (string): Provider/supplier code
-- `action` (string, optional): Action name
-
-### Telegram Functions
-
-#### `sendErrorAlert(options)`
-Send error alert to Telegram with automatic thread routing.
-
-**Parameters:**
-- `botToken` (string): Telegram bot token
-- `chatId` (string): Chat ID
-- `messageThreadIds` (Object): Thread ID configuration
-- `product` (string, optional): Product type (hotel/flight/tour/transfer)
-- `environment` (string): Environment (PROD/STAGING/DEV)
-- `type` (string): Error type (system/third_party)
-- `errorCode` (string): Error code
-- `errorMessage` (string): Error message
-- `metric` (string): Metric name
-- `user` (string, optional): User email
-- `supplierCode` (string, optional): Supplier code
-- `supplier` (Object, optional): Supplier object
-- `requestMetadata` (Object, optional): Request metadata
-- `errorStack` (string, optional): Error stack trace
-- `disableNotification` (boolean, optional): Disable notification
-
-#### `sendStartupNotification(options)`
-Send service startup notification.
-
-**Parameters:**
-- `botToken` (string): Telegram bot token
-- `chatId` (string): Chat ID
-- `environment` (string): Environment
-- `serviceName` (string, optional): Service name
-- `version` (string, optional): Service version
-- `customMessage` (string, optional): Custom message
-- `disableNotification` (boolean, optional): Disable notification
-
-#### `initializeTelegram(options)`
-Initialize Telegram with webhook or polling.
-
-**Parameters:**
-- `botToken` (string): Telegram bot token
-- `webhookUrl` (string, optional): Webhook URL
-- `usePolling` (boolean, optional): Force polling mode
-- `onUpdate` (Function, optional): Update handler function
-- `allowedUpdates` (Array, optional): Allowed update types
-- `dropPendingUpdates` (boolean, optional): Drop pending updates
 
 ## License
 
