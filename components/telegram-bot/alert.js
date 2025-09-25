@@ -1,50 +1,104 @@
 const axios = require('axios')
 const { TELEGRAM } = require('../../constants')
+const { printJson, tryParseJson, printStack } = require('../../utils')
 
 /**
- * Build telegram message from log metadata
+ * Build telegram message from log metadata with Markdown formatting
  * @param {Object} logMeta - Log metadata object
- * @returns {string} Formatted telegram message
+ * @returns {string} Formatted telegram message with Markdown
  */
 function buildTelegramMessage(logMeta) {
     const lines = []
 
-    lines.push(`ENV: ${logMeta.environment || 'UNKNOWN'}`)
+    // Header with environment
+    lines.push(`🔧 **Environment:** \`${logMeta.environment || 'UNKNOWN'}\``)
+    lines.push('') // Empty line
 
+    // Alert type with emoji
     if (logMeta.type) {
-        lines.push(`TYPE: ${logMeta.type}`)
+        const typeEmoji = logMeta.type === 'third_party' ? '🔌' : '⚙️'
+        lines.push(`${typeEmoji} **Type:** \`${logMeta.type}\``)
     }
 
+    // Error code with emoji
     if (logMeta.error_code) {
-        lines.push(`ERROR: ${logMeta.error_code}`)
+        lines.push(`❌ **Error Code:** \`${logMeta.error_code}\``)
     }
 
+    // Main error message
     if (logMeta.error_message) {
-        lines.push(`MESSAGE: ${logMeta.error_message}`)
+        lines.push(`📝 **Message:**`)
+        lines.push(`\`\`\``)
+        lines.push(`${logMeta.error_message}`)
+        lines.push(`\`\`\``)
     }
 
+    // Metric info
     if (logMeta.metric) {
-        lines.push(`METRIC: ${logMeta.metric}`)
+        lines.push(`📊 **Metric:** \`${logMeta.metric}\``)
     }
 
+    // User info
     if (logMeta.user) {
-        lines.push(`USER: ${logMeta.user}`)
+        lines.push(`👤 **User:** \`${logMeta.user}\``)
     }
 
+    // Supplier info
     if (logMeta.supplier_code) {
-        lines.push(`SUPPLIER CODE: ${logMeta.supplier_code}`)
+        lines.push(`🏢 **Supplier:** \`${logMeta.supplier_code}\``)
     }
 
     if (logMeta.supplier_meta) {
-        lines.push(`SUPPLIER META: ${logMeta.supplier_meta}`)
+        lines.push(`🔗 **Supplier Details:**`)
+        lines.push(`\`\`\`json`)
+        lines.push(`${logMeta.supplier_meta}`)
+        lines.push(`\`\`\``)
     }
 
+    // Request metadata
     if (logMeta.request_metadata) {
-        lines.push(`REQUEST METADATA: ${logMeta.request_metadata}`)
+        // Try to parse JSON to extract specific IDs
+        const requestData = tryParseJson(logMeta.request_metadata)
+        // Extract and display specific IDs if they exist
+        if (requestData && typeof requestData === 'object') {
+            if (requestData.trace_id) {
+                lines.push(`🔍 **Trace ID:**`)
+                lines.push(`\`\`\``)
+                lines.push(`${requestData.trace_id}`)
+                lines.push(`\`\`\``)
+            }
+            if (requestData.request_id) {
+                lines.push(`🔍 **Request ID:**`)
+                lines.push(`\`\`\``)
+                lines.push(`${requestData.request_id}`)
+                lines.push(`\`\`\``)
+            }
+            if (requestData.search_id) {
+                lines.push(`🔍 **Search ID:**`)
+                lines.push(`\`\`\``)
+                lines.push(`${requestData.search_id}`)
+                lines.push(`\`\`\``)
+            }
+            if (requestData.log_id) {
+                lines.push(`🔍 **Log ID:**`)
+                lines.push(`\`\`\``)
+                lines.push(`${requestData.log_id}`)
+                lines.push(`\`\`\``)
+            }
+        }
+
+        lines.push(`📋 **Request Data:**`)
+        lines.push(`\`\`\`json`)
+        lines.push(`${printJson(logMeta.request_metadata)}`)
+        lines.push(`\`\`\``)
     }
 
+    // Error stack (most important, so put at bottom)
     if (logMeta.error_stack) {
-        lines.push(`STACK: ${logMeta.error_stack}`)
+        lines.push(`🐛 **Stack Trace:**`)
+        lines.push(`\`\`\``)
+        lines.push(printStack(logMeta.error_stack))
+        lines.push(`\`\`\``)
     }
 
     return lines.join('\n')
@@ -85,15 +139,6 @@ function buildTelegramMessage(logMeta) {
  * @returns {Object} Log metadata object
  */
 function buildLogMeta(options) {
-    // Truncate error stack to first 2 lines if error_stack is present
-    let errorStack = options.error_stack
-    if (errorStack && typeof errorStack === 'string') {
-        const stackLines = errorStack.split('\n')
-        if (stackLines.length > 2) {
-            errorStack = stackLines.slice(0, 2).join('\n')
-        }
-    }
-
     return {
         type: options.type || 'system',
         environment: options.environment || 'STAGING',
@@ -118,7 +163,7 @@ function buildLogMeta(options) {
         })(),
         error_code: options.error_code,
         error_message: options.error_message,
-        error_stack: errorStack,
+        error_stack: options.error_stack,
         error_metadata: (() => {
             if (!options.metadata) return null
 
@@ -200,7 +245,8 @@ function buildTelegramPayload(logMeta, options) {
     return {
         chat_id: chatId,
         text: buildTelegramMessage(logMeta),
-        message_thread_id: messageThreadId
+        message_thread_id: messageThreadId,
+        parse_mode: 'Markdown'
     }
 }
 
