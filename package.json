@@ -61,11 +61,13 @@
   "engines": {
     "node": ">=14.0.0"
   },
+  "types": "types.d.ts",
   "files": [
     "index.js",
     "components/",
     "constants/",
     "utils/",
+    "types.d.ts",
     "examples/",
     "README.md"
   ]

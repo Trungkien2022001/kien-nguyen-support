@@ -17,7 +17,7 @@ const {
 const { tryParseJson } = require('../../utils')
 
 function prepareLogDirectory(baseDir = BASE_DIR) {
-    const logsBaseDir = path.join(__dirname, '..', baseDir)
+    const logsBaseDir = path.join(process.cwd(), baseDir)
     const dateStr = moment().format(DATE_FORMAT)
     const logsDir = path.join(logsBaseDir, `${LOG_FILE_PREFIX}${dateStr}`)
     const oldLogsDir = path.join(logsBaseDir, OLD_LOGS_DIR)
@@ -57,7 +57,15 @@ function prepareLogDirectory(baseDir = BASE_DIR) {
     return logsDir
 }
 
-function saveProviderLog({ action, req, res, code, name, random = false }) {
+function saveProviderLog({
+    action,
+    req,
+    res,
+    code,
+    name,
+    random = false,
+    time
+}) {
     prepareLogDirectory()
     const providerReq = tryParseJson(req)
     const providerRes = tryParseJson(res)
@@ -68,8 +76,7 @@ function saveProviderLog({ action, req, res, code, name, random = false }) {
     const dateStr = moment().format(DATE_FORMAT)
     const timeStr = moment().format(DATETIME_FORMAT)
     const logsDir = path.join(
-        __dirname,
-        '..',
+        process.cwd(),
         BASE_DIR,
         `${LOG_FILE_PREFIX}${dateStr}`
     )
@@ -87,6 +94,9 @@ function saveProviderLog({ action, req, res, code, name, random = false }) {
     }
     if (action) {
         baseFileName += `_${action}`
+    }
+    if (time) {
+        baseFileName += `_${time}ms`
     }
     if (random) {
         const randomString = Math.random()
@@ -139,15 +149,21 @@ function buildCurl(request) {
     return curl
 }
 
-function saveProviderCurl({ name, request, code, action, random = false }) {
+function saveProviderCurl({
+    name,
+    request,
+    code,
+    action,
+    random = false,
+    time
+}) {
     prepareLogDirectory(CURL_BASE_DIR)
     const curlCommand = buildCurl(request)
 
     const dateStr = moment().format(DATE_FORMAT)
     const timeStr = moment().format(DATETIME_FORMAT)
     const logsDir = path.join(
-        __dirname,
-        '..',
+        process.cwd(),
         CURL_BASE_DIR,
         `${LOG_FILE_PREFIX}${dateStr}`
     )
@@ -165,6 +181,9 @@ function saveProviderCurl({ name, request, code, action, random = false }) {
     }
     if (action) {
         baseFileName += `_${action}`
+    }
+    if (time) {
+        baseFileName += `_${time}ms`
     }
 
     if (random) {
