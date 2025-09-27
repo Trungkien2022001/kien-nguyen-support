@@ -1,12 +1,19 @@
 # Kien Nguyen Support
 
-A comprehensive utilities package for logging, Telegram alerts, and webhook management.
+A comprehensive utilities package for logging, Telegram alerts, and webhook management with enhanced formatting and ID extraction.
 
 ## Installation
 
 ```bash
 npm install kien-nguyen-support
 ```
+
+## 🆕 Version 1.1.0 Features
+
+- **🔍 Smart ID Extraction**: Automatically extract and display `trace_id`, `request_id`, `search_id`, `log_id` in copyable code blocks
+- **📝 Enhanced Stack Formatting**: Error stacks limited to first 2 lines for cleaner display
+- **🎨 Improved JSON Display**: Better formatting with proper indentation and safe parsing
+- **📱 Rich Telegram Messages**: Enhanced Markdown formatting with emojis and structured layout
 
 ## 3 Core Features
 
@@ -125,8 +132,10 @@ await telegram.sendMessage({
 })
 
 /**
- * Send error alert with auto thread routing
+ * Send error alert with auto thread routing and enhanced formatting
  * Thread routing: product_type_metric → general fallback
+ * 
+ * ✨ NEW: Automatic ID extraction and rich formatting!
  */
 await telegram.sendErrorAlert({
     // Core error info
@@ -144,8 +153,16 @@ await telegram.sendErrorAlert({
         id: 123,
         source_id: 'EXP001'
     },
-    request_metadata: { bookingId: 'ABC123' },  // Object or string
-    error_stack: error.stack,                   // Auto-truncated to 2 lines
+    
+    // 🆕 Enhanced request metadata with ID extraction
+    request_metadata: { 
+        bookingId: 'ABC123',
+        search_id: 'd8e2048ba1974f568a807532752e452f',  // Auto-extracted!
+        trace_id: 'trace-12345',                        // Auto-extracted!
+        log_id: '63b5c9faf56fc04fdf2509b3874cb6d4'       // Auto-extracted!
+    },
+    
+    error_stack: error.stack,                   // 🆕 Auto-truncated to 2 lines
     metadata: { additional: 'data' }           // Any extra metadata
 })
 ```
@@ -318,6 +335,72 @@ async function searchFlights(searchData) {
     })
     // ... business logic
 }
+```
+
+## 🆕 Enhanced Telegram Message Format
+
+With version 1.1.0, Telegram messages now include:
+
+### Smart ID Extraction
+Automatically extracts and displays IDs in copyable code blocks:
+```
+🔍 **Search ID:**
+```
+d8e2048ba1974f568a807532752e452f
+```
+
+🔍 **Trace ID:**
+```
+trace-12345-abcdef
+```
+
+🔍 **Log ID:**
+```
+63b5c9faf56fc04fdf2509b3874cb6d4
+```
+```
+
+### Rich Formatting with Emojis
+- 🔧 **Environment**: `PRODUCTION`  
+- 🔌 **Type**: `third_party`
+- ❌ **Error Code**: `BOOKING_FAILED`
+- 📝 **Message**: Error details in code blocks
+- 👤 **User**: User information
+- 🏢 **Supplier**: Supplier details  
+- 📋 **Request Data**: Formatted JSON with proper indentation
+- 🐛 **Stack Trace**: Limited to first 2 lines for readability
+
+### Example Enhanced Message Output
+```
+🔧 Environment: `PRODUCTION`
+
+🔌 Type: `third_party`
+❌ Error Code: `BOOKING_FAILED`
+📝 Message:
+```
+Failed to book hotel room
+```
+
+🔍 Search ID:
+```
+d8e2048ba1974f568a807532752e452f
+```
+
+📋 Request Data:
+```json
+{
+  "adults": 2,
+  "children": 0,
+  "departure_date": "2025-09-29",
+  "search_id": "d8e2048ba1974f568a807532752e452f"
+}
+```
+
+🐛 Stack Trace:
+```
+BookingError: Room not available
+    at bookRoom (/app/services/booking.js:145:12)
+```
 ```
 
 ## API Reference

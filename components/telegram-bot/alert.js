@@ -38,6 +38,11 @@ function buildTelegramMessage(logMeta) {
         lines.push(`📊 **Metric:** \`${logMeta.metric}\``)
     }
 
+    // Event name info
+    if (logMeta.event_name) {
+        lines.push(`🎯 **Event:** \`${logMeta.event_name}\``)
+    }
+
     // User info
     if (logMeta.user) {
         lines.push(`👤 **User:** \`${logMeta.user}\``)
@@ -93,6 +98,14 @@ function buildTelegramMessage(logMeta) {
         lines.push(`\`\`\``)
     }
 
+    // Request body
+    if (logMeta.request_body) {
+        lines.push(`📦 **Request Body:**`)
+        lines.push(`\`\`\`json`)
+        lines.push(printJson(logMeta.request_body))
+        lines.push(`\`\`\``)
+    }
+
     // Error stack (most important, so put at bottom)
     if (logMeta.error_stack) {
         lines.push(`🐛 **Stack Trace:**`)
@@ -114,6 +127,8 @@ function buildTelegramMessage(logMeta) {
  * - user (Object): User object with email property
  * - supplier (Object): Supplier info { code, id, source_id, contract_id, user_name }
  * - metric (string): Metric for routing (search, book, cancel, etc.)
+ * - event_name (string): Event name for tracking
+ * - request_body (Object|string): Request body data
  * - request_metadata (Object|string): Request metadata
  * - error_code (string): Error code
  * - error_message (string): Error message
@@ -128,10 +143,12 @@ function buildTelegramMessage(logMeta) {
  *   supplier_code: string,
  *   supplier_meta: string (JSON),
  *   metric: string,
+ *   event_name: string,
+ *   request_body: string (JSON or direct),
  *   request_metadata: string (JSON or direct),
  *   error_code: string,
  *   error_message: string,
- *   error_stack: string (truncated to 2 lines),
+ *   error_stack: string,
  *   error_metadata: string (JSON or direct)
  * }
  *
@@ -154,6 +171,8 @@ function buildLogMeta(options) {
               })
             : null,
         metric: options.metric,
+        event_name: options.event_name,
+        request_body: options.request_body,
         request_metadata: (() => {
             if (!options.request_metadata) return null
 
