@@ -89,6 +89,7 @@ class TelegramClient {
             environment = 'STAGING',
             messageThreadIds = {},
             disableNotification = false,
+            beautyMessage = true,
             timeout = 5000
         } = config
 
@@ -103,6 +104,7 @@ class TelegramClient {
         this.environment = environment
         this.messageThreadIds = messageThreadIds
         this.disableNotification = disableNotification
+        this.beautyMessage = beautyMessage
         this.timeout = timeout
     }
 

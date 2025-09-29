@@ -9,11 +9,35 @@ const {
 const { TelegramClient } = require('./components/telegram-bot')
 const { createTelegramWebhookClient } = require('./components/telegram-webhook')
 
+// Alert components - Import all from alerts index
+const {
+    SlackAlert,
+    DiscordAlert,
+    MessengerAlert,
+    MattermostAlert,
+    N8nAlert,
+    TelegramAlert,
+    ZaloAlert,
+    EmailAlert,
+    MultiChannelAlert
+} = require('./components/alerts')
+
 // Main exports
 module.exports = {
     // 🚀 MAIN FACTORY EXPORTS - This is what most people will use
     TelegramClient,
     createTelegramWebhookClient,
+
+    // 📢 MULTICHANNEL ALERT CLIENTS
+    MultiChannelAlert,
+    SlackAlert,
+    DiscordAlert,
+    MessengerAlert,
+    MattermostAlert,
+    N8nAlert,
+    TelegramAlert,
+    ZaloAlert,
+    EmailAlert,
 
     // Logging utilities
     saveProviderLog,
