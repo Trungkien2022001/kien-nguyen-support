@@ -66,10 +66,10 @@ function buildTelegramMessage(logMeta) {
         const requestData = tryParseJson(logMeta.request_metadata)
         // Extract and display specific IDs if they exist
         if (requestData && typeof requestData === 'object') {
-            if (requestData.trace_id) {
+            if (requestData.trace_id || requestData['trace-id']) {
                 lines.push(`🔍 **Trace ID:**`)
                 lines.push(`\`\`\``)
-                lines.push(`${requestData.trace_id}`)
+                lines.push(`${requestData.trace_id || requestData['trace-id']}`)
                 lines.push(`\`\`\``)
             }
             if (requestData.request_id) {
