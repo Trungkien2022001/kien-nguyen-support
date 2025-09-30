@@ -8,14 +8,23 @@ A comprehensive multi-channel alert system and utilities package for logging, no
 npm install kien-nguyen-support
 ```
 
-## 🆕 Version 2.0.0 Features
+## 🆕 Version 2.2.0 Features
 
 - **� MultiChannelAlert**: Send alerts to multiple channels simultaneously (Telegram, Slack, Mattermost, Email, etc.)
 - **🎯 Logger-Style API**: Clean constructor pattern with `.error()`, `.info()`, `.warn()`, `.success()` methods
 - **�🔍 Smart ID Extraction**: Automatically extract and display IDs in copyable code blocks
 - **📝 Enhanced Formatting**: Rich formatting with emojis, proper JSON display, and truncated stack traces
 - **⚙️ Conditional Channels**: Initialize only channels with available configurations
-- **� Dynamic Management**: Add/remove channels at runtime with graceful error handling
+- **🔄 Dynamic Management**: Add/remove channels at runtime with graceful error handling
+
+## ⚡ Performance & Optimization
+
+- **Zero Dependencies**: No external runtime dependencies - uses only Node.js built-ins
+- **85% Smaller Package**: Reduced from ~585KB to ~85KB by replacing axios & moment.js
+- **Native HTTP Client**: Custom implementation with axios-compatible API
+- **Custom DateTime Utils**: Native Date formatting without external libraries
+- **Fast Installation**: No dependency resolution or security vulnerabilities
+- **Production Ready**: Lightweight, secure, and maintainable
 
 ## 4 Core Features
 

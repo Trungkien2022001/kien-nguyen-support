@@ -1,4 +1,4 @@
-const axios = require('axios')
+const { httpClient } = require('../../../utils')
 
 /**
  * Get alert severity based on type
@@ -147,7 +147,7 @@ async function sendMessage(data, options = {}) {
             headers.Authorization = `Basic ${auth}`
         }
 
-        const response = await axios.post(config.webhookUrl, payload, {
+        const response = await httpClient.post(config.webhookUrl, payload, {
             timeout: config.timeout || 10000,
             headers
         })
@@ -224,7 +224,7 @@ async function triggerWorkflow(data, options = {}) {
 
         const url = `${config.n8nUrl}/api/v1/workflows/${config.workflowId}/execute`
 
-        const response = await axios.post(
+        const response = await httpClient.post(
             url,
             { data: payload },
             {

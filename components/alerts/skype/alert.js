@@ -1,4 +1,4 @@
-const axios = require('axios')
+const { httpClient } = require('../../../utils')
 
 /**
  * Skype Bot alert utility functions
@@ -25,7 +25,7 @@ async function sendMessage(config, message) {
         tokenParams.append('client_secret', botPassword)
         tokenParams.append('scope', 'https://api.botframework.com/.default')
 
-        const tokenResponse = await axios.post(tokenUrl, tokenParams, {
+        const tokenResponse = await httpClient.post(tokenUrl, tokenParams, {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
@@ -43,7 +43,7 @@ async function sendMessage(config, message) {
             textFormat: 'markdown'
         }
 
-        const response = await axios.post(messageUrl, messagePayload, {
+        const response = await httpClient.post(messageUrl, messagePayload, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
                 'Content-Type': 'application/json'

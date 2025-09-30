@@ -1,6 +1,6 @@
 /* eslint-disable no-return-await */
 /* eslint-disable no-unused-vars */
-const axios = require('axios')
+const { httpClient } = require('../../../utils')
 
 /**
  * WhatsApp alert utility functions
@@ -35,7 +35,7 @@ async function sendMessage(config, message, options = {}) {
     }
 
     try {
-        const response = await axios.post(url, payload, {
+        const response = await httpClient.post(url, payload, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
                 'Content-Type': 'application/json'

@@ -1,4 +1,4 @@
-const axios = require('axios')
+const { httpClient } = require('../../../utils')
 
 /**
  * Build Zalo message with beauty formatting options
@@ -250,7 +250,7 @@ async function sendMessage(data, options = {}) {
         const payload = buildZaloPayload(data, config)
         const url = `https://openapi.zalo.me/v2.0/oa/message`
 
-        await axios.post(url, payload, {
+        await httpClient.post(url, payload, {
             timeout,
             headers: {
                 'Content-Type': 'application/json',

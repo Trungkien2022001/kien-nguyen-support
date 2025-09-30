@@ -1,4 +1,4 @@
-const axios = require('axios')
+const { httpClient } = require('../../../utils')
 
 /**
  * WeChat Work alert utility functions
@@ -21,7 +21,7 @@ async function sendMessage(config, message) {
             }
         }
 
-        const response = await axios.post(webhookUrl, payload, {
+        const response = await httpClient.post(webhookUrl, payload, {
             headers: {
                 'Content-Type': 'application/json'
             },

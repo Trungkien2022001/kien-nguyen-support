@@ -1,4 +1,4 @@
-const axios = require('axios')
+const { httpClient } = require('../../../utils')
 
 /**
  * Rocket.Chat alert utility functions
@@ -20,7 +20,7 @@ async function sendMessage(config, message) {
             channel: config.channel || undefined
         }
 
-        const response = await axios.post(webhookUrl, payload, {
+        const response = await httpClient.post(webhookUrl, payload, {
             headers: {
                 'Content-Type': 'application/json'
             },

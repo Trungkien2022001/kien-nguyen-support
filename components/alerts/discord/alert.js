@@ -1,4 +1,4 @@
-const axios = require('axios')
+const { httpClient } = require('../../../utils')
 
 /**
  * Get type color for Discord embeds
@@ -158,7 +158,7 @@ async function sendMessage(data, options = {}) {
     try {
         const payload = buildDiscordPayload(data, config)
 
-        await axios.post(config.webhookUrl, payload, {
+        await httpClient.post(config.webhookUrl, payload, {
             timeout: config.timeout || 5000,
             headers: {
                 'Content-Type': 'application/json'

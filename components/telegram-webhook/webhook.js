@@ -1,4 +1,4 @@
-const axios = require('axios')
+const { httpClient } = require('../../utils')
 const { TELEGRAM } = require('../../constants')
 
 /**
@@ -30,20 +30,17 @@ async function setWebhook({
 
     const payload = {
         url,
-        ...(secretToken && { secret_token: secretToken }),
-        ...(allowedUpdates && { allowed_updates: allowedUpdates }),
+        max_connections: maxConnections || 40,
+        allowed_updates: allowedUpdates || ['message', 'callback_query'],
+        secret_token: secretToken,
         ...(dropPendingUpdates !== undefined && {
             drop_pending_updates: dropPendingUpdates
-        }),
-        ...(maxConnections && { max_connections: maxConnections })
+        })
     }
 
     try {
-        const response = await axios.post(apiUrl, payload, {
-            timeout,
-            headers: {
-                'Content-Type': 'application/json'
-            }
+        const response = await httpClient.post(apiUrl, payload, {
+            timeout
         })
 
         return response.data
@@ -83,7 +80,7 @@ async function deleteWebhook({
     }
 
     try {
-        const response = await axios.post(apiUrl, payload, {
+        const response = await httpClient.post(apiUrl, payload, {
             timeout,
             headers: {
                 'Content-Type': 'application/json'
@@ -116,7 +113,7 @@ async function getWebhookInfo({ botToken, timeout = 10000 }) {
     const apiUrl = `${TELEGRAM.API_BASE_URL}${botToken}/getWebhookInfo`
 
     try {
-        const response = await axios.get(apiUrl, {
+        const response = await httpClient.get(apiUrl, {
             timeout,
             headers: {
                 'Content-Type': 'application/json'

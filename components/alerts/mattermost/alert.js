@@ -1,4 +1,4 @@
-const axios = require('axios')
+const { httpClient } = require('../../../utils')
 
 /**
  * Get type emoji for Mattermost messages
@@ -141,7 +141,7 @@ async function sendMessage(data, options = {}) {
             Authorization: `Bearer ${config.token}`
         }
 
-        await axios.post(config.apiUrl, payload, {
+        await httpClient.post(config.apiUrl, payload, {
             timeout: config.timeout || 10000,
             headers
         })

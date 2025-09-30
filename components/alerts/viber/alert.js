@@ -1,6 +1,6 @@
 /* eslint-disable no-return-await */
 /* eslint-disable no-unused-vars */
-const axios = require('axios')
+const { httpClient } = require('../../../utils')
 
 /**
  * Viber Bot alert utility functions
@@ -36,7 +36,7 @@ async function sendMessage(config, message, options = {}) {
     }
 
     try {
-        const response = await axios.post(url, payload, {
+        const response = await httpClient.post(url, payload, {
             headers: {
                 'X-Viber-Auth-Token': botToken,
                 'Content-Type': 'application/json'

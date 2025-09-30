@@ -1,4 +1,4 @@
-const axios = require('axios')
+const { httpClient } = require('../../../utils')
 
 /**
  * Get type emoji for Messenger messages
@@ -147,7 +147,7 @@ async function sendMessage(data, options = {}) {
 
         const url = `https://graph.facebook.com/v18.0/me/messages?access_token=${config.pageAccessToken}`
 
-        await axios.post(url, payload, {
+        await httpClient.post(url, payload, {
             timeout: config.timeout || 5000,
             headers: {
                 'Content-Type': 'application/json'

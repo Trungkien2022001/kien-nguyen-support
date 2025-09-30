@@ -1,5 +1,5 @@
 /* eslint-disable no-return-await */
-const axios = require('axios')
+const { httpClient } = require('../../../utils')
 
 /**
  * Line Notify alert utility functions
@@ -26,7 +26,7 @@ async function sendMessage(config, message, options = {}) {
     }
 
     try {
-        const response = await axios.post(url, params, {
+        const response = await httpClient.post(url, params, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
                 'Content-Type': 'application/x-www-form-urlencoded'

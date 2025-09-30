@@ -1,4 +1,4 @@
-const axios = require('axios')
+const { httpClient } = require('../../../utils')
 
 /**
  * Build Slack message with beauty formatting options
@@ -254,7 +254,7 @@ async function sendMessage(data, options = {}) {
     try {
         const payload = buildSlackPayload(data, config)
 
-        await axios.post(webhookUrl, payload, {
+        await httpClient.post(webhookUrl, payload, {
             timeout,
             headers: {
                 'Content-Type': 'application/json'

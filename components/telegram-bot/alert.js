@@ -1,4 +1,4 @@
-const axios = require('axios')
+const { httpClient } = require('../../utils')
 const { TELEGRAM } = require('../../constants')
 const { printJson, tryParseJson, printStack } = require('../../utils')
 
@@ -318,7 +318,7 @@ async function sendMessage(options) {
         const payload = buildTelegramPayload(logMeta, options)
         const url = `${TELEGRAM.API_BASE_URL}${botToken}/sendMessage`
 
-        const response = await axios.post(url, payload, {
+        const response = await httpClient.post(url, payload, {
             timeout,
             headers: {
                 'Content-Type': 'application/json'

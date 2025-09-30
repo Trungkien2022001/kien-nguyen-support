@@ -1,4 +1,4 @@
-const axios = require('axios')
+const { httpClient } = require('../../../utils')
 
 /**
  * Firebase Cloud Messaging alert utility functions
@@ -28,7 +28,7 @@ async function sendMessage(config, message) {
             }
         }
 
-        const response = await axios.post(
+        const response = await httpClient.post(
             'https://fcm.googleapis.com/fcm/send',
             payload,
             {
