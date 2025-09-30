@@ -1,7 +1,6 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-console */
-require('dotenv').config()
 const { TelegramClient } = require('./components/telegram-bot')
 
 // Test TelegramClient with your config

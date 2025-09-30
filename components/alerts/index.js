@@ -8,6 +8,13 @@ const { TelegramAlert } = require('./telegram')
 const { ZaloAlert } = require('./zalo')
 const { EmailAlert } = require('./email')
 const { MultiChannelAlert } = require('./multi-channel')
+const { WhatsAppAlert } = require('./whatsapp')
+const { LineAlert } = require('./line')
+const { ViberAlert } = require('./viber')
+const { SkypeAlert } = require('./skype')
+const { WeChatAlert } = require('./wechat')
+const { RocketChatAlert } = require('./rocketchat')
+const { FirebaseAlert } = require('./firebase')
 
 module.exports = {
     SlackAlert,
@@ -18,5 +25,12 @@ module.exports = {
     TelegramAlert,
     ZaloAlert,
     EmailAlert,
-    MultiChannelAlert
+    MultiChannelAlert,
+    WhatsAppAlert,
+    LineAlert,
+    ViberAlert,
+    SkypeAlert,
+    WeChatAlert,
+    RocketChatAlert,
+    FirebaseAlert
 }

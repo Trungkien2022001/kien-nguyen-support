@@ -19,7 +19,10 @@ const {
     TelegramAlert,
     ZaloAlert,
     EmailAlert,
-    MultiChannelAlert
+    MultiChannelAlert,
+    WhatsAppAlert,
+    LineAlert,
+    ViberAlert
 } = require('./components/alerts')
 
 // Main exports
@@ -38,6 +41,9 @@ module.exports = {
     TelegramAlert,
     ZaloAlert,
     EmailAlert,
+    WhatsAppAlert,
+    LineAlert,
+    ViberAlert,
 
     // Logging utilities
     saveProviderLog,

@@ -1097,6 +1097,13 @@ Create a webhook client for production.
 - **ZaloAlert**: Send alerts via Zalo Official Account
 - **MessengerAlert**: Send alerts via Facebook Messenger
 - **N8nAlert**: Trigger N8n workflows with alert data
+- **WhatsAppAlert**: Send alerts via WhatsApp Business API
+- **LineAlert**: Send alerts via Line Notify API
+- **ViberAlert**: Send alerts via Viber Bot API
+- **SkypeAlert**: Send alerts via Skype Bot Framework
+- **WeChatAlert**: Send alerts via WeChat Work webhook
+- **RocketChatAlert**: Send alerts to Rocket.Chat channels
+- **FirebaseAlert**: Send push notifications via Firebase Cloud Messaging
 - **MultiChannelAlert**: Send to multiple channels simultaneously
 
 ### Service Types

@@ -1,4 +1,3 @@
-const moment = require('moment')
 const fs = require('fs')
 const path = require('path')
 const {
@@ -6,19 +5,21 @@ const {
     CURL_BASE_DIR,
     OLD_LOGS_DIR,
     LOG_FILE_PREFIX,
-    DATE_FORMAT,
-    DATETIME_FORMAT,
-    TIME_FORMAT,
     FILE_EXTENSIONS,
     REQUEST_SUFFIX,
     RESPONSE_SUFFIX,
     CURL_SUFFIX
 } = require('../../constants')
-const { tryParseJson } = require('../../utils')
+const {
+    tryParseJson,
+    formatDate,
+    formatDateTime,
+    formatTime
+} = require('../../utils')
 
 function prepareLogDirectory(baseDir = BASE_DIR) {
     const logsBaseDir = path.join(process.cwd(), baseDir)
-    const dateStr = moment().format(DATE_FORMAT)
+    const dateStr = formatDate()
     const logsDir = path.join(logsBaseDir, `${LOG_FILE_PREFIX}${dateStr}`)
     const oldLogsDir = path.join(logsBaseDir, OLD_LOGS_DIR)
 
@@ -41,7 +42,7 @@ function prepareLogDirectory(baseDir = BASE_DIR) {
                     const dest = path.join(oldLogsDir, name)
 
                     const finalDest = fs.existsSync(dest)
-                        ? `${dest}-${moment().format(TIME_FORMAT)}`
+                        ? `${dest}-${formatTime()}`
                         : dest
 
                     fs.renameSync(src, finalDest)
@@ -73,8 +74,8 @@ function saveProviderLog({
     const isReqXml = typeof providerReq !== 'object'
     const isResXml = typeof providerRes !== 'object'
 
-    const dateStr = moment().format(DATE_FORMAT)
-    const timeStr = moment().format(DATETIME_FORMAT)
+    const dateStr = formatDate()
+    const timeStr = formatDateTime()
     const logsDir = path.join(
         process.cwd(),
         BASE_DIR,
@@ -160,8 +161,8 @@ function saveProviderCurl({
     prepareLogDirectory(CURL_BASE_DIR)
     const curlCommand = buildCurl(request)
 
-    const dateStr = moment().format(DATE_FORMAT)
-    const timeStr = moment().format(DATETIME_FORMAT)
+    const dateStr = formatDate()
+    const timeStr = formatDateTime()
     const logsDir = path.join(
         process.cwd(),
         CURL_BASE_DIR,
