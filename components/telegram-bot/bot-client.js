@@ -6,43 +6,59 @@ const {
 } = require('./alert')
 
 /**
- * Determine message thread ID based on product, type, and metric
+ * Determine message thread ID based on service, type, and metric
  * @param {Object} options - Thread determination options
- * @param {string} options.product - Product type (hotel, flight, tour, transfer)
+ * @param {string} options.service - Service type (hotel, flight, tour, transfer)
  * @param {string} options.type - Alert type (system, third_party)
  * @param {string} options.metric - Metric type (search, prebook, book, cancel)
  * @param {Object} options.messageThreadIds - Available thread IDs
  * @returns {number|undefined} Message thread ID
  */
-function determineMessageThreadId({ product, type, metric, messageThreadIds }) {
+function determineMessageThreadId({ service, type, metric, messageThreadIds }) {
     if (!messageThreadIds || Object.keys(messageThreadIds).length === 0) {
         return undefined
     }
 
     // Convert to lowercase for consistent matching
-    const productLower = product ? product.toLowerCase() : 'hotel'
+    const serviceLower = service ? service.toLowerCase() : 'hotel'
     const typeLower = type ? type.toLowerCase() : 'system'
     const metricLower = metric ? metric.toLowerCase() : 'general'
 
-    // Determine prefix based on product and type
-    let prefix
-    if (typeLower === 'third_party') {
-        prefix = `${productLower}_third_party_`
-    } else {
-        prefix = `${productLower}_system_`
+    // Try nested object access: messageThreadIds.service.type.metric
+    try {
+        // First try specific metric
+        if (
+            messageThreadIds[serviceLower] &&
+            messageThreadIds[serviceLower][typeLower] &&
+            messageThreadIds[serviceLower][typeLower][metricLower]
+        ) {
+            return messageThreadIds[serviceLower][typeLower][metricLower]
+        }
+
+        // Try 'all' fallback for the service and type
+        if (
+            messageThreadIds[serviceLower] &&
+            messageThreadIds[serviceLower][typeLower] &&
+            messageThreadIds[serviceLower][typeLower].all
+        ) {
+            return messageThreadIds[serviceLower][typeLower].all
+        }
+
+        // Try 'general' fallback for the service and type
+        if (
+            messageThreadIds[serviceLower] &&
+            messageThreadIds[serviceLower][typeLower] &&
+            messageThreadIds[serviceLower][typeLower].general
+        ) {
+            return messageThreadIds[serviceLower][typeLower].general
+        }
+
+        // Final fallback to general
+        return messageThreadIds.general
+    } catch (error) {
+        // Fallback to general if any access fails
+        return messageThreadIds.general
     }
-
-    // Build thread key and try to find matching thread ID
-    const threadKey = `${prefix}${metricLower}`
-
-    return (
-        messageThreadIds[threadKey] ||
-        messageThreadIds[`${prefix}general`] ||
-        messageThreadIds[`${prefix}all`] ||
-        messageThreadIds[`${productLower}_system_general`] ||
-        messageThreadIds[`${productLower}_system_all`] ||
-        messageThreadIds.general
-    )
 }
 
 /**
@@ -51,22 +67,33 @@ function determineMessageThreadId({ product, type, metric, messageThreadIds }) {
  * INITIALIZATION REQUIREMENTS:
  * - botToken (string, required): Telegram bot token from @BotFather
  * - chatId (string, required): Chat ID where messages will be sent
- * - product (string, optional): Default product type ('hotel', 'flight', 'tour', 'transfer')
+ * - service (string, optional): Default service type ('hotel', 'flight', 'tour', 'transfer')
  * - environment (string, optional): Default environment ('DEV', 'STAGING', 'PROD')
  * - messageThreadIds (Object, optional): Thread routing configuration for smart routing
  * - disableNotification (boolean, optional): Default notification setting
  * - timeout (number, optional): Request timeout in milliseconds
  *
  * THREAD ROUTING CONFIGURATION:
- * messageThreadIds should follow pattern: {product}_{type}_{metric}
+ * messageThreadIds should follow nested object pattern: service.type.metric
  * Example:
  * {
- *   general: 9,
- *   hotel_system_search: 19,
- *   hotel_system_book: 23,
- *   hotel_third_party_search: 30,
- *   hotel_third_party_book: 34,
- *   flight_system_search: 41
+ *   general: 17,
+ *   hotel: {
+ *     system: {
+ *       all: 17,
+ *       search: 19,
+ *       book: 23
+ *     },
+ *     third_party: {
+ *       all: 28,
+ *       search: 30,
+ *       book: 34
+ *     }
+ *   },
+ *   flight: {
+ *     system: { search: 5038 },
+ *     third_party: { search: 3561 }
+ *   }
  * }
  */
 class TelegramClient {
@@ -75,7 +102,7 @@ class TelegramClient {
      * @param {Object} config - Telegram configuration
      * @param {string} config.botToken - Telegram bot token (REQUIRED)
      * @param {string} config.chatId - Default chat ID (REQUIRED)
-     * @param {string} config.product - Default product type (hotel, flight, tour, transfer)
+     * @param {string} config.service - Default service type (hotel, flight, tour, transfer)
      * @param {string} config.environment - Default environment (DEV, STAGING, PROD)
      * @param {Object} config.messageThreadIds - Message thread ID configuration (optional)
      * @param {boolean} config.disableNotification - Default disable notification setting (optional)
@@ -85,10 +112,11 @@ class TelegramClient {
         const {
             botToken,
             chatId,
-            product = 'hotel',
+            service = 'hotel',
             environment = 'STAGING',
             messageThreadIds = {},
             disableNotification = false,
+            beautyMessage = true,
             timeout = 5000
         } = config
 
@@ -99,10 +127,11 @@ class TelegramClient {
         // Store config as instance properties
         this.botToken = botToken
         this.chatId = chatId
-        this.product = product
+        this.service = service
         this.environment = environment
         this.messageThreadIds = messageThreadIds
         this.disableNotification = disableNotification
+        this.beautyMessage = beautyMessage
         this.timeout = timeout
     }
 
@@ -123,7 +152,7 @@ class TelegramClient {
      * - error_stack (string): Error stack trace (auto-truncated)
      * - metadata (Object|string): Additional metadata
      * - environment (string): Override default environment
-     * - product (string): Override default product
+     * - service (string): Override default service
      *
      * LOG META STRUCTURE (auto-generated from options):
      * {
@@ -150,7 +179,7 @@ class TelegramClient {
             botToken: this.botToken,
             chatId: this.chatId,
             messageThreadIds: this.messageThreadIds,
-            product: this.product,
+            service: this.service,
             environment: this.environment,
             timeout: this.timeout
         }
@@ -163,7 +192,7 @@ class TelegramClient {
      *
      * ERROR ALERT OPTIONS (inherits all sendMessage options plus):
      * - Automatically sets appropriate type and metric defaults
-     * - Uses smart thread routing based on product + type + metric
+     * - Uses smart thread routing based on service + type + metric
      * - Falls back gracefully to general thread if specific not found
      *
      * EXAMPLE USAGE:
@@ -188,7 +217,7 @@ class TelegramClient {
             botToken: options.botToken || this.botToken,
             chatId: options.chatId || this.chatId,
             messageThreadIds: options.messageThreadIds || this.messageThreadIds,
-            product: options.product || this.product,
+            service: options.service || this.service,
             environment: options.environment || this.environment,
             type: options.type || 'system',
             metric: options.metric || 'general',
@@ -207,7 +236,7 @@ class TelegramClient {
         const messageThreadId =
             options.messageThreadId ||
             determineMessageThreadId({
-                product: options.product || this.product,
+                service: options.service || this.service,
                 type: 'system',
                 metric: 'general',
                 messageThreadIds: this.messageThreadIds
@@ -221,7 +250,7 @@ class TelegramClient {
                 options.disableNotification !== undefined
                     ? options.disableNotification
                     : true,
-            product: options.product || this.product,
+            service: options.service || this.service,
             ...options
         })
     }
@@ -235,7 +264,7 @@ class TelegramClient {
         const messageThreadId =
             options.messageThreadId ||
             determineMessageThreadId({
-                product: options.product || this.product,
+                service: options.service || this.service,
                 type: options.type || 'system',
                 metric: options.metric || 'general',
                 messageThreadIds: this.messageThreadIds
@@ -249,7 +278,7 @@ class TelegramClient {
                 options.disableNotification !== undefined
                     ? options.disableNotification
                     : this.disableNotification,
-            product: options.product || this.product,
+            service: options.service || this.service,
             ...options
         })
     }
@@ -262,7 +291,7 @@ class TelegramClient {
         return {
             botToken: this.botToken,
             chatId: this.chatId,
-            product: this.product,
+            service: this.service,
             environment: this.environment,
             messageThreadIds: this.messageThreadIds,
             disableNotification: this.disableNotification,

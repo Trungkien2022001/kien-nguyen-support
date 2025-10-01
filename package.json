@@ -1,7 +1,7 @@
 {
   "name": "kien-nguyen-support",
-  "version": "1.1.2",
-  "description": "Utilities package for logging, telegram alerts, and webhook management",
+  "version": "2.0.0",
+  "description": "Multi-channel alert system and utilities package for logging, notifications, and webhook management",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Package is ready for publish\""
@@ -14,10 +14,17 @@
     "utilities",
     "support",
     "logging",
-    "telegram",
-    "webhook",
     "alerts",
     "notifications",
+    "multi-channel",
+    "telegram",
+    "slack",
+    "mattermost",
+    "email",
+    "discord",
+    "zalo",
+    "messenger",
+    "webhook",
     "provider-logs",
     "curl-logs",
     "api-logs"
@@ -33,11 +40,7 @@
     "url": "https://github.com/Trungkien2022001/kien-nguyen-support/issues"
   },
   "homepage": "https://github.com/Trungkien2022001/kien-nguyen-support#readme",
-  "dependencies": {
-    "axios": "^1.12.2",
-    "dotenv": "^17.2.2",
-    "moment": "^2.30.1"
-  },
+  "dependencies": {},
   "devDependencies": {
     "eslint": "6.8.0",
     "eslint-config-airbnb-base": "14.0.0",

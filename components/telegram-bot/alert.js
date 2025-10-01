@@ -1,4 +1,4 @@
-const axios = require('axios')
+const { httpClient } = require('../../utils')
 const { TELEGRAM } = require('../../constants')
 const { printJson, tryParseJson, printStack } = require('../../utils')
 
@@ -196,52 +196,56 @@ function buildLogMeta(options) {
 /**
  * Dynamically detect message thread ID from config
  * @param {Object} params - Detection parameters
- * @param {string} params.product - Product type (flight, hotel, etc.)
+ * @param {string} params.service - Service type (flight, hotel, etc.)
  * @param {string} params.type - Alert type (system, third_party)
  * @param {string} params.metric - Metric type (search, book, support, etc.)
  * @param {Object} params.messageThreadIds - Available thread IDs from config
  * @returns {number|undefined} Message thread ID
  */
-function detectMessageThreadId({ product, type, metric, messageThreadIds }) {
+function detectMessageThreadId({ service, type, metric, messageThreadIds }) {
     if (!messageThreadIds || Object.keys(messageThreadIds).length === 0) {
         return undefined
     }
 
-    const productLower = (product || 'hotel').toLowerCase()
+    const serviceLower = (service || 'hotel').toLowerCase()
     const typeLower = (type || 'system').toLowerCase()
     const metricLower = (metric || 'general').toLowerCase()
 
-    // Normalize metric using METRIC_MAPPINGS if available, otherwise use as-is
-    const normalizedMetric = metricLower
+    // Try nested object access: messageThreadIds.service.type.metric
+    try {
+        // First try specific metric
+        if (
+            messageThreadIds[serviceLower] &&
+            messageThreadIds[serviceLower][typeLower] &&
+            messageThreadIds[serviceLower][typeLower][metricLower]
+        ) {
+            return messageThreadIds[serviceLower][typeLower][metricLower]
+        }
 
-    // Build possible thread keys in priority order
-    const possibleKeys = [
-        // 1. Exact match: product_type_metric
-        `${productLower}_${typeLower}_${normalizedMetric}`,
-        // 2. Fallback to general for this product+type
-        `${productLower}_${typeLower}_general`,
-        // 3. Fallback to all for this product+type
-        `${productLower}_${typeLower}_all`
-    ]
+        // Try 'all' fallback for the service and type
+        if (
+            messageThreadIds[serviceLower] &&
+            messageThreadIds[serviceLower][typeLower] &&
+            messageThreadIds[serviceLower][typeLower].all
+        ) {
+            return messageThreadIds[serviceLower][typeLower].all
+        }
 
-    // 4. Fallback to system if type was third_party
-    if (typeLower === 'third_party') {
-        possibleKeys.push(
-            `${productLower}_system_${normalizedMetric}`,
-            `${productLower}_system_general`,
-            `${productLower}_system_all`
-        )
+        // Try 'general' fallback for the service and type
+        if (
+            messageThreadIds[serviceLower] &&
+            messageThreadIds[serviceLower][typeLower] &&
+            messageThreadIds[serviceLower][typeLower].general
+        ) {
+            return messageThreadIds[serviceLower][typeLower].general
+        }
+
+        // Final fallback to general
+        return messageThreadIds.general
+    } catch (error) {
+        // Fallback to general if any access fails
+        return messageThreadIds.general
     }
-
-    // 5. Global fallback
-    possibleKeys.push('general')
-
-    // Find first matching thread ID using find method
-    const foundKey = possibleKeys.find(
-        key => messageThreadIds[key] !== undefined
-    )
-
-    return foundKey ? messageThreadIds[foundKey] : undefined
 }
 
 /**
@@ -251,11 +255,11 @@ function detectMessageThreadId({ product, type, metric, messageThreadIds }) {
  * @returns {Object} Telegram payload
  */
 function buildTelegramPayload(logMeta, options) {
-    const { chatId, messageThreadIds = {}, product = 'hotel' } = options
+    const { chatId, messageThreadIds = {}, service = 'hotel' } = options
 
     // Get thread ID using dynamic detection from messageThreadIds config
     const messageThreadId = detectMessageThreadId({
-        product,
+        service,
         type: logMeta.type,
         metric: logMeta.metric,
         messageThreadIds
@@ -283,7 +287,7 @@ function buildTelegramPayload(logMeta, options) {
  *
  * OPTIONAL OPTIONS:
  * - messageThreadIds (Object): Thread routing config
- * - product (string): Product type for routing (default: 'hotel')
+ * - service (string): Service type for routing (default: 'hotel')
  * - type (string): Alert type (default: 'system')
  * - metric (string): Metric for routing (default: 'general')
  * - timeout (number): Request timeout in ms (default: 10000)
@@ -291,13 +295,13 @@ function buildTelegramPayload(logMeta, options) {
  *
  * THREAD ROUTING:
  * Uses detectMessageThreadId() to find appropriate thread based on:
- * product + type + metric → messageThreadIds[key] → fallback to general
+ * service + type + metric → messageThreadIds[key] → fallback to general
  *
  * @param {Object} options - All options including config (like error-handler.js)
  * @param {string} options.botToken - Telegram bot token
  * @param {string} options.chatId - Chat ID to send message to
  * @param {Object} options.messageThreadIds - Message thread ID configuration
- * @param {string} options.product - Product type (hotel, flight, tour, transfer)
+ * @param {string} options.service - Service type (hotel, flight, tour, transfer)
  * @param {string} options.error_message - Message text
  * @param {number} options.timeout - Request timeout in ms (optional, default: 10000)
  * @returns {Promise<Object>} Telegram API response
@@ -318,7 +322,7 @@ async function sendMessage(options) {
         const payload = buildTelegramPayload(logMeta, options)
         const url = `${TELEGRAM.API_BASE_URL}${botToken}/sendMessage`
 
-        const response = await axios.post(url, payload, {
+        const response = await httpClient.post(url, payload, {
             timeout,
             headers: {
                 'Content-Type': 'application/json'
