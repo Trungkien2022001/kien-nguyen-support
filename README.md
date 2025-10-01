@@ -8,7 +8,7 @@ A comprehensive multi-channel alert system and utilities package for logging, no
 npm install kien-nguyen-support
 ```
 
-## 🆕 Version 2.2.0 Features
+## 🆕 Version 2.0.0 Features
 
 - **� MultiChannelAlert**: Send alerts to multiple channels simultaneously (Telegram, Slack, Mattermost, Email, etc.)
 - **🎯 Logger-Style API**: Clean constructor pattern with `.error()`, `.info()`, `.warn()`, `.success()` methods
@@ -31,7 +31,7 @@ npm install kien-nguyen-support
 - 📝 **Third-Party Log**: Save HTTP request/response logs and curl commands
 - 🚨 **Multi-Channel Alerts**: Send notifications to Telegram, Slack, Mattermost, Email and more
 - 🔗 **Telegram Webhook**: Production webhook management with fallback
-- 🎯 **Smart Routing**: Automatic thread/channel routing based on service and environment
+- 🎯 **Smart Routing**: Automatic thread/channel routing based on service and environment using nested object access
 
 ## Quick Start
 
@@ -497,25 +497,58 @@ const { TelegramClient } = require('kien-nguyen-support')
  * - chatId: Chat ID to send messages to
  * 
  * Optional config:
- * - product: Default product type (hotel, flight, tour, transfer)
+ * - service: Default service type (hotel, flight, tour, transfer)
  * - environment: Default environment (DEV, STAGING, PROD)
- * - messageThreadIds: Thread routing configuration
+ * - messageThreadIds: Thread routing configuration (nested object structure)
  * - disableNotification: Disable notifications (default: false)
  * - timeout: Request timeout in ms (default: 5000)
  */
 const telegram = new TelegramClient({
     botToken: process.env.TELEGRAM_BOT_TOKEN,     // Required
     chatId: process.env.TELEGRAM_CHAT_ID,        // Required
-    product: 'hotel',                            // Optional
+    service: 'hotel',                            // Optional
     environment: 'PROD',                         // Optional
-    messageThreadIds: {                          // Optional - for smart routing
-        general: 9,
-        hotel_system_search: 19,
-        hotel_system_book: 23,
-        hotel_third_party_search: 30,
-        hotel_third_party_book: 34,
-        flight_system_search: 41,
-        // ... more thread IDs
+    messageThreadIds: {                          // Optional - nested object structure
+        general: 17,
+        hotel: {
+            system: {
+                all: 17,
+                search: 19,
+                offer_search: 19,
+                prebook: 21,
+                book: 23,
+                cancel: 25
+            },
+            third_party: {
+                all: 28,
+                search: 30,
+                prebook: 32,
+                book: 34,
+                cancel: 36
+            }
+        },
+        flight: {
+            system: {
+                search: 5038,
+                'confirm-tax': 5039,
+                'generate-pnr': 5042
+            },
+            third_party: {
+                search: 3561,
+                'confirm-tax': 5050
+            }
+        },
+        flight: {
+            system: {
+                search: 5038,
+                'confirm-tax': 5039,
+                'generate-pnr': 5042
+            },
+            third_party: {
+                search: 3561,
+                'confirm-tax': 5050
+            }
+        }
     },
     disableNotification: false,                  // Optional
     timeout: 10000                              // Optional
@@ -532,7 +565,7 @@ await telegram.sendMessage({
 
 /**
  * Send error alert with auto thread routing and enhanced formatting
- * Thread routing: product_type_metric → general fallback
+ * Thread routing: service.type.metric → nested object access → general fallback
  * 
  * ✨ NEW: Automatic ID extraction and rich formatting!
  */
@@ -541,7 +574,8 @@ await telegram.sendErrorAlert({
     error_message: 'Failed to book hotel',      // Required
     error_code: 'BOOKING_FAILED',               // Optional
     
-    // Routing (auto-detects thread)
+    // Routing (auto-detects thread using nested object access)
+    // Example: messageThreadIds.hotel.third_party.book = 34
     type: 'third_party',                        // 'system' or 'third_party'
     metric: 'book',                            // For thread routing
     
@@ -579,6 +613,51 @@ const telegramClient = createTelegramClient({
 
 await telegramClient.sendMessage({ error_message: 'Hello!' })
 ```
+
+})
+
+### 🎯 Smart Thread Routing (v2.2.0)
+
+The new nested object structure provides better organization and type safety:
+
+```javascript
+// Old underscore pattern (deprecated)
+messageThreadIds: {
+    'hotel_system_search': 19,
+    'hotel_system_book': 23,
+    'hotel_third_party_search': 30
+}
+
+// New nested object structure (recommended)
+messageThreadIds: {
+    general: 17,           // Global fallback
+    hotel: {
+        system: {
+            all: 17,       // Service-specific fallback
+            search: 19,    // Specific metric
+            book: 23
+        },
+        third_party: {
+            all: 28,
+            search: 30,
+            book: 34
+        }
+    },
+    flight: {
+        system: { search: 5038 },
+        third_party: { search: 3561 }
+    }
+}
+```
+
+**Routing Priority:**
+1. `messageThreadIds.{service}.{type}.{metric}` - Most specific
+2. `messageThreadIds.{service}.{type}.all` - Service + type fallback  
+3. `messageThreadIds.{service}.{type}.general` - Service + type general
+4. `messageThreadIds.general` - Global fallback
+
+**Example:** `service: 'hotel'`, `type: 'system'`, `metric: 'search'`
+→ Looks for `messageThreadIds.hotel.system.search = 19`
 
 ## Feature 4: Telegram Webhook (Production Setup)
 
