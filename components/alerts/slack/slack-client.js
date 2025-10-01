@@ -31,6 +31,7 @@ class SlackAlert {
      * @param {number} config.timeout - Default timeout (optional)
      * @param {Object} config.channels - Nested channels configuration
      * @param {Array} config.specific - Specific field configurations
+     * @param {boolean} config.strictMode - Enable data filtering based on specific fields (default: false)
      * @param {string} config.action - Action type for channel routing
      */
     constructor(config) {
@@ -43,6 +44,7 @@ class SlackAlert {
             timeout = 5000,
             channels = {},
             specific = [],
+            strictMode = false,
             action = 'all'
         } = config
 
@@ -59,6 +61,7 @@ class SlackAlert {
             timeout,
             channels,
             specific,
+            strictMode,
             action
         }
 

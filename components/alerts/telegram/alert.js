@@ -1,6 +1,22 @@
-const { httpClient } = require('../../../utils')
+const { httpClient, filterDataBySpecific } = require('../../../utils')
+const { printJson, printStack } = require('../../../utils')
 const { TELEGRAM } = require('../../../constants')
 
+/**
+ * Escape Telegram markdown special characters for legacy Markdown
+ * @param {string} text - Text to escape
+ * @returns {string} Escaped text
+ */
+function escapeMarkdown(text) {
+    if (typeof text !== 'string') return text
+
+    // For Telegram legacy Markdown, only escape these characters
+    return text
+        .replace(/\*/g, '\\*')
+        .replace(/_/g, '\\_')
+        .replace(/`/g, '\\`')
+        .replace(/\[/g, '\\[')
+}
 /**
  * Build telegram message with beauty formatting options
  * @param {Object} data - Data object to display
@@ -14,14 +30,31 @@ function buildTelegramMessage(data, beauty = true, specific = []) {
     if (specific && specific.length > 0) {
         // Use specific field configurations
         specific.forEach(field => {
-            const { key, title, emoji = '', markdown = beauty } = field
+            const { key, title, markdown = beauty } = field
             const value = data[key]
 
             if (value !== undefined && value !== null) {
+                // Format value using printJson utility
+                let displayValue = value
+                if (typeof value === 'object') {
+                    displayValue = printJson(value)
+                } else if (
+                    typeof value === 'string' &&
+                    ['stack', 'stack_trace'].includes(key)
+                ) {
+                    // Use printStack for error stack traces
+                    displayValue = printStack(value)
+                }
+
                 if (markdown) {
-                    lines.push(`${emoji} **${title}:** \`${value}\``)
+                    // Use Telegram Markdown format like telegram-bot: **bold**
+                    lines.push(`**${title}:**`)
+                    lines.push(`\`\`\``)
+                    lines.push(`${displayValue}`)
+                    lines.push(`\`\`\``)
                 } else {
-                    lines.push(`${emoji} ${title}: ${value}`)
+                    // Plain text, no formatting
+                    lines.push(`${title}: ${displayValue}`)
                 }
             }
         })
@@ -34,10 +67,16 @@ function buildTelegramMessage(data, beauty = true, specific = []) {
                 // Skip functions and complex objects
                 if (typeof value === 'function') return
 
-                // Format value
+                // Format value using printJson utility
                 let displayValue = value
                 if (typeof value === 'object') {
-                    displayValue = JSON.stringify(value, null, 2)
+                    displayValue = printJson(value)
+                } else if (
+                    typeof value === 'string' &&
+                    ['stack', 'stack_trace'].includes(key)
+                ) {
+                    // Use printStack for error stack traces
+                    displayValue = printStack(value)
                 }
 
                 // Auto-generate title from key
@@ -47,12 +86,16 @@ function buildTelegramMessage(data, beauty = true, specific = []) {
 
                 if (beauty) {
                     if (typeof value === 'object') {
-                        lines.push(`📋 **${title}:**`)
+                        lines.push(`📋 *${escapeMarkdown(title)}*:`)
                         lines.push(`\`\`\`json`)
-                        lines.push(displayValue)
+                        lines.push(escapeMarkdown(displayValue))
                         lines.push(`\`\`\``)
                     } else {
-                        lines.push(`📝 **${title}:** \`${displayValue}\``)
+                        lines.push(
+                            `📝 *${escapeMarkdown(title)}*: \`${escapeMarkdown(
+                                displayValue
+                            )}\``
+                        )
                     }
                 } else {
                     lines.push(`${title}: ${displayValue}`)
@@ -223,14 +266,17 @@ async function sendMessage(data, options = {}) {
 
     // Merge with instance config
     const config = { ...this.config, ...options }
-    const { botToken, timeout = 10000 } = config
+    const { botToken, timeout = 10000, specific, strictMode } = config
 
     if (!botToken) {
         throw new Error('botToken is required')
     }
 
     try {
-        const payload = buildTelegramPayload(data, config)
+        // Apply data filtering if strictMode is enabled
+        const filteredData = filterDataBySpecific(data, specific, strictMode)
+
+        const payload = buildTelegramPayload(filteredData, config)
         const url = `${TELEGRAM.API_BASE_URL}${botToken}/sendMessage`
 
         const response = await httpClient.post(url, payload, {

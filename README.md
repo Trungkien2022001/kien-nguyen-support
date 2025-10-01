@@ -1,6 +1,52 @@
-# Kien Nguyen Support
+# 🚨 MultiChannelAlert - Kien Nguyen Support
 
-A comprehensive multi-channel alert system and utilities package for logging, notifications, and webhook management with enhanced formatting and smart routing.
+<div align="center">
+  <h2>🎯 The Ultimate Multi-Channel Alert & Notification System</h2>
+  <p><strong>Send alerts to 15+ platforms simultaneously with zero dependencies!</strong></p>
+</div>
+
+## 📱 Supported Platforms
+
+<div align="center">
+  <p>
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/slack/slack-original.svg" width="40" height="40" alt="Slack" title="Slack"/>
+    &nbsp;&nbsp;
+    <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" width="40" height="40" alt="Telegram" title="Telegram"/>
+    &nbsp;&nbsp;
+    <img src="https://www.mattermost.com/wp-content/uploads/2022/02/icon.png" width="40" height="40" alt="Mattermost" title="Mattermost"/>
+    &nbsp;&nbsp;
+    <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/discord-square-color-icon.png" width="40" height="40" alt="Discord" title="Discord"/>
+    &nbsp;&nbsp;
+    <img src="https://upload.wikimedia.org/wikipedia/commons/4/4e/Gmail_Icon.png" width="40" height="40" alt="Email" title="Email/Gmail"/>
+    &nbsp;&nbsp;
+    <img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_%282019%29.png" width="40" height="40" alt="Messenger" title="Facebook Messenger"/>
+    &nbsp;&nbsp;
+    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" width="40" height="40" alt="WhatsApp" title="WhatsApp"/>
+    &nbsp;&nbsp;
+    <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg" width="40" height="40" alt="GitHub" title="GitHub (via N8n)"/>
+  </p>
+  <p>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Icon_of_Zalo.svg/100px-Icon_of_Zalo.svg.png" width="40" height="40" alt="Zalo" title="Zalo"/>
+    &nbsp;&nbsp;
+    <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/LINE_logo.svg" width="40" height="40" alt="LINE" title="LINE"/>
+    &nbsp;&nbsp;
+    <img src="https://upload.wikimedia.org/wikipedia/commons/7/76/Viber.png?20210524155044" width="40" height="40" alt="Viber" title="Viber"/>
+    &nbsp;&nbsp;
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Skype_logo_%282019%E2%80%93present%29.svg/1187px-Skype_logo_%282019%E2%80%93present%29.svg.png" width="40" height="40" alt="Skype" title="Skype"/>
+    &nbsp;&nbsp;
+    <img src="https://www.shareicon.net/data/128x128/2017/02/01/877517_media_512x512.png" width="40" height="40" alt="WeChat" title="WeChat"/>
+    &nbsp;&nbsp;
+    <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/RocketChat_Logo_1024x1024.png?20160424202046" width="40" height="40" alt="RocketChat" title="RocketChat"/>
+    &nbsp;&nbsp;
+    <img src="https://brandlogos.net/wp-content/uploads/2025/03/firebase_icon-logo_brandlogos.net_tcvck.png" width="40" height="40" alt="Firebase" title="Firebase"/>
+    &nbsp;&nbsp;
+    <img src="https://upload.wikimedia.org/wikipedia/commons/d/d9/N8n_logo.png?20210707053626" width="40" height="40" alt="N8n" title="N8n Webhooks"/>
+  </p>
+</div>
+
+---
+
+A comprehensive **MultiChannelAlert system** and utilities package for logging, notifications, and webhook management with enhanced formatting and smart routing.
 
 ## Installation
 
@@ -8,14 +54,57 @@ A comprehensive multi-channel alert system and utilities package for logging, no
 npm install kien-nguyen-support
 ```
 
-## 🆕 Version 2.0.0 Features
+## 🌟 Why MultiChannelAlert?
 
-- **� MultiChannelAlert**: Send alerts to multiple channels simultaneously (Telegram, Slack, Mattermost, Email, etc.)
+<div align="center">
+  <table>
+    <tr>
+      <td align="center">
+        <h3>🚀 Before</h3>
+        <p>Multiple libraries, complex setup</p>
+        <code>
+          telegram-bot-api<br/>
+          + @slack/web-api<br/>
+          + discord.js<br/>
+          + nodemailer<br/>
+          + whatsapp-web.js<br/>
+          = 50+ dependencies
+        </code>
+      </td>
+      <td align="center">
+        <h3>✨ After</h3>
+        <p>One simple import, zero dependencies</p>
+        <code>
+          const { MultiChannelAlert }<br/>
+          = require('kien-nguyen-support')<br/>
+          <br/>
+          // Send to 15+ platforms<br/>
+          multiAlert.error('Alert!')<br/>
+          = ZERO dependencies
+        </code>
+      </td>
+    </tr>
+  </table>
+</div>
+
+## 🚨 MultiChannelAlert - Core Features
+
+<div align="center">
+  <h3>🎯 ONE API → 15+ PLATFORMS</h3>
+  <p><em>"Write once, alert everywhere!"</em></p>
+</div>
+
+### 🌟 Key Highlights
+
+- **🚨 MultiChannelAlert**: Send alerts to **15+ platforms simultaneously** (Telegram, Slack, Mattermost, Discord, Email, WhatsApp, Zalo, LINE, Viber, Skype, WeChat, RocketChat, Firebase, N8n, Messenger)
 - **🎯 Logger-Style API**: Clean constructor pattern with `.error()`, `.info()`, `.warn()`, `.success()` methods
-- **�🔍 Smart ID Extraction**: Automatically extract and display IDs in copyable code blocks
-- **📝 Enhanced Formatting**: Rich formatting with emojis, proper JSON display, and truncated stack traces
+- **🔍 Smart ID Extraction**: Automatically extract and display IDs in copyable code blocks
+- **📝 Enhanced Formatting**: Rich formatting with emojis, proper JSON display, platform-specific markdown, and code blocks for curl commands
 - **⚙️ Conditional Channels**: Initialize only channels with available configurations
 - **🔄 Dynamic Management**: Add/remove channels at runtime with graceful error handling
+- **🎛️ Individual StrictMode**: Filter data per channel with `strictMode` parameter for sensitive data protection
+- **📊 Configuration Inheritance**: Channel-specific settings override global configurations
+- **🎨 Cross-Platform Formatting**: Consistent rich formatting across Telegram (Markdown), Mattermost (Markdown), Slack (Blocks), Discord (Embeds)
 
 ## ⚡ Performance & Optimization
 
@@ -26,12 +115,168 @@ npm install kien-nguyen-support
 - **Fast Installation**: No dependency resolution or security vulnerabilities
 - **Production Ready**: Lightweight, secure, and maintainable
 
-## 4 Core Features
+## 📱 Live Demo Screenshots
 
-- 📝 **Third-Party Log**: Save HTTP request/response logs and curl commands
-- 🚨 **Multi-Channel Alerts**: Send notifications to Telegram, Slack, Mattermost, Email and more
-- 🔗 **Telegram Webhook**: Production webhook management with fallback
+### Demo with Telegram and Mattermost
+Real-time alerts with rich formatting, ID extraction, and smart routing:
+
+<div align="center" style="padding: 0 20px;">
+  <img src="http://res.cloudinary.com/trungkien2022001/image/upload/v1759311010/upload/ccphpfenl4k5bdrgxw14.png" alt="Telegram Error Alert" width="350"/>
+  <img src="http://res.cloudinary.com/trungkien2022001/image/upload/v1759310992/upload/y59vvrocvng90elwuipr.png" alt="Telegram System Alert" width="350"/>
+  <br/>
+  <img src="http://res.cloudinary.com/trungkien2022001/image/upload/v1759310923/upload/brcgfxw2pud8nzkybegt.png" alt="Mattermost Alert Demo" width="350"/>
+</div>
+
+*Live examples showing enhanced formatting, automatic ID extraction, and multi-channel broadcasting*
+
+
+## 🎯 4 Core Features
+
+- 🚨 **MultiChannelAlert System**: Send notifications to **15+ platforms** simultaneously - Telegram, Slack, Mattermost, Discord, Email, WhatsApp, Zalo, LINE, Viber, Skype, WeChat, RocketChat, Firebase, N8n, Messenger
+- 📝 **Third-Party Log**: Save HTTP request/response logs and curl commands with provider-specific formatting
+- 🔗 **Telegram Webhook**: Production webhook management with fallback and auto-recovery
 - 🎯 **Smart Routing**: Automatic thread/channel routing based on service and environment using nested object access
+
+## ⚡ 30-Second Demo
+
+```javascript
+// 🚨 ONE LINE → 15+ PLATFORMS
+const multiAlert = new MultiChannelAlert({
+    channels: [
+        { type: 'telegram', config: { /* telegram config */ } },
+        { type: 'slack', config: { /* slack config */ } },
+        { type: 'discord', config: { /* discord config */ } },
+        { type: 'email', config: { /* email config */ } },
+        // ... add 11+ more platforms
+    ]
+})
+
+// Send error alert to ALL channels simultaneously ⚡
+multiAlert.error('Payment system down!', { 
+    userId: 'U123456', 
+    amount: 999.99 
+})
+
+// Result: 15+ notifications sent instantly! 🎉
+```
+
+<div align="center">
+  <h4>🔥 <strong>15+ Platforms</strong> • <strong>Zero Dependencies</strong> • <strong>One Simple API</strong> 🔥</h4>
+</div>
+
+## 🎛️ Advanced Data Filtering & Formatting
+
+### 📊 StrictMode Data Filtering
+
+Control exactly which data fields are sent to each platform:
+
+```javascript
+const multiAlert = new MultiChannelAlert({
+    channels: [
+        {
+            type: 'telegram',
+            config: { 
+                botToken: 'your-token',
+                chatId: 'your-chat-id',
+                strictMode: true  // Enable filtering for this channel
+            }
+        },
+        {
+            type: 'mattermost', 
+            config: {
+                apiUrl: 'your-api-url',
+                token: 'your-token',
+                channelId: 'your-channel-id'
+                // No strictMode - will send all data
+            }
+        }
+    ],
+    specific: [
+        { key: 'user', title: '👤 User', markdown: true },
+        { key: 'method', title: '📨 Method', markdown: true },
+        { key: 'status', title: '📊 Status', markdown: true },
+        { key: 'error_code', title: '🔴 Error Code', markdown: true },
+        { key: 'curl', title: '💻 cURL Command', markdown: true }
+    ],
+    strictMode: false  // Global setting (can be overridden per channel)
+})
+
+// Full data object
+const alertData = {
+    user: 'john_doe',
+    method: 'POST',
+    status: 500,
+    error_code: 'DB_CONNECTION_FAILED',
+    curl: 'curl -X POST https://api.example.com/users',
+    internal_debug: 'This sensitive data',  // Won't be sent if strictMode=true
+    server_logs: 'Internal server information'
+}
+
+// Telegram will only receive: user, method, status, error_code, curl
+// Mattermost will receive all fields (including internal_debug, server_logs)
+await multiAlert.error(alertData)
+```
+
+### 🎨 Enhanced Message Formatting
+
+Rich formatting with platform-specific optimizations:
+
+**Telegram Output:**
+```
+**👤 User:**
+```
+john_doe
+```
+
+**📨 Method:**
+```
+POST
+```
+
+**💻 cURL Command:**
+```
+curl -X POST https://api.example.com/users
+```
+```
+
+**Mattermost Output:**
+```
+------------------------
+[From Mattermost Bot Alert]
+🚨 Environment: PRODUCTION
+**👤 User:** `john_doe`
+**📨 Method:** `POST`
+**💻 cURL Command:**
+```bash
+curl -X POST https://api.example.com/users
+```
+------------------------
+```
+
+### 🔧 Individual Component StrictMode
+
+Use individual alert components with their own filtering:
+
+```javascript
+// Individual components with their own strictMode
+const telegramAlert = new TelegramAlert({
+    botToken: 'your-token',
+    chatId: 'your-chat-id',
+    strictMode: true  // This component will filter data
+})
+
+const slackAlert = new SlackAlert({
+    webhookUrl: 'your-webhook-url'
+    // No strictMode - sends all data
+})
+
+// Same data, different filtering per component
+const data = { user: 'john', secret: 'hidden', method: 'POST' }
+const specific = [{ key: 'user', title: '👤 User' }, { key: 'method', title: '📨 Method' }]
+
+await telegramAlert.error(data)  // Only sends: user, method (if specific is provided)
+await slackAlert.error(data)     // Sends all: user, secret, method
+```
 
 ## Quick Start
 
@@ -181,6 +426,74 @@ await multiAlert.success({
 })
 ```
 
+#### 🎯 Configuration Inheritance & Data Filtering (NEW)
+
+MultiChannelAlert now supports advanced configuration inheritance and data filtering:
+
+```javascript
+const multiAlert = new MultiChannelAlert({
+    // Global configuration
+    service: 'flight',
+    environment: 'PRODUCTION',
+    beauty: true,
+    specific: [
+        { field: 'error', markdown: false },
+        { field: 'message', markdown: true }
+    ],
+    strictMode: true, // Enable data filtering
+    
+    channels: [
+        {
+            type: 'telegram',
+            config: {
+                botToken: 'bot-token',
+                chatId: 'chat-id',
+                // Channel overrides: add timestamp field
+                specific: [
+                    { field: 'error', markdown: false },
+                    { field: 'message', markdown: true },
+                    { field: 'timestamp', markdown: false }
+                ]
+            }
+        },
+        {
+            type: 'slack',
+            config: {
+                webhookUrl: 'webhook-url'
+                // Uses global specific: only error + message
+            }
+        }
+    ]
+})
+
+// Test data with many fields
+const alertData = {
+    error: 'Flight API timeout',
+    message: 'Booking system down',
+    timestamp: '2024-01-01T10:00:00Z',
+    userId: 'user123',           // Will be filtered out
+    sessionId: 'session456',     // Will be filtered out
+    metadata: { extra: 'info' }  // Will be filtered out
+}
+
+await multiAlert.error(alertData)
+// ✅ Telegram receives: error, message, timestamp (3 fields)
+// ✅ Slack receives: error, message (2 fields)
+// ❌ Other fields filtered out due to strictMode: true
+```
+
+**Configuration Inheritance Rules:**
+- **Channel config** overrides **Global config** overrides **Default values**
+- `strictMode: true` → Only fields in `specific[]` are sent
+- `strictMode: false` → All fields are sent regardless of `specific[]`
+- Channel-level `specific[]` overrides global `specific[]`
+
+**Benefits:**
+- 🎯 **Selective Logging**: Only log relevant fields per channel
+- 🔒 **Data Privacy**: Filter sensitive fields from certain channels  
+- ⚡ **Performance**: Reduce message size by filtering unnecessary data
+- 🎛️ **Flexibility**: Different field sets per channel type
+
 ### Conditional Channel Initialization
 
 Only initialize channels that have available configuration:
@@ -234,6 +547,73 @@ const multiAlert = new MultiChannelAlert({
 const result = await multiAlert.error({ message: 'Test error' })
 console.log(`Sent to ${result.summary.successful}/${result.summary.total} channels`)
 ```
+
+#### 🎯 Individual Component StrictMode (NEW)
+
+Each alert component now supports individual `strictMode` for data filtering:
+
+```javascript
+const { TelegramAlert, SlackAlert, MattermostAlert } = require('kien-nguyen-support')
+
+// TelegramAlert with strictMode
+const telegramAlert = new TelegramAlert({
+    botToken: 'your-bot-token',
+    chatId: 'your-chat-id',
+    specific: [
+        { field: 'error', markdown: false },
+        { field: 'message', markdown: true }
+    ],
+    strictMode: true // Enable data filtering
+})
+
+// SlackAlert with strictMode  
+const slackAlert = new SlackAlert({
+    webhookUrl: 'your-webhook-url',
+    specific: [
+        { key: 'error', title: 'Error' },
+        { key: 'user_id', title: 'User ID' }
+    ],
+    strictMode: true // Enable data filtering
+})
+
+// MattermostAlert with strictMode
+const mattermostAlert = new MattermostAlert({
+    apiUrl: 'your-mattermost-api-url',
+    token: 'your-token',
+    channelId: 'your-channel-id',
+    specific: [
+        { field: 'error' },
+        { field: 'message' },
+        { field: 'user_id' }
+    ],
+    strictMode: true // Enable data filtering
+})
+
+// Test data with many fields
+const alertData = {
+    error: 'System failure',
+    message: 'Database error',
+    user_id: 'user_123',
+    session_id: 'session_456',    // Will be filtered out
+    ip_address: '192.168.1.1',   // Will be filtered out
+    metadata: { extra: 'info' }  // Will be filtered out
+}
+
+await telegramAlert.error(alertData)
+// ✅ Sends only: error, message
+
+await slackAlert.error(alertData)  
+// ✅ Sends only: error, user_id
+
+await mattermostAlert.error(alertData)
+// ✅ Sends only: error, message, user_id
+```
+
+**Benefits of Individual StrictMode:**
+- 🎯 **Selective Data**: Filter data without MultiChannelAlert
+- 🔒 **Privacy Control**: Remove sensitive fields per component
+- ⚡ **Performance**: Reduce message payload size
+- 🎛️ **Flexibility**: Different filtering per alert type
 
 ### Individual Alert Classes
 
@@ -968,6 +1348,138 @@ BookingError: Room not available
 ```
 ```
 
+## 🔧 Troubleshooting & Best Practices
+
+### ❌ Common Issues
+
+#### "message text is empty" Error (Telegram)
+**Cause:** StrictMode filtering resulted in empty data or missing required fields.
+
+**Solution:**
+```javascript
+// ❌ Wrong: No matching fields in specific configuration
+const specific = [
+    { key: 'user_name', title: 'User' }  // But data has 'user', not 'user_name'
+]
+const data = { user: 'john', method: 'POST' }
+
+// ✅ Correct: Match field keys exactly
+const specific = [
+    { key: 'user', title: '👤 User' },   // Matches data.user
+    { key: 'method', title: '📨 Method' } // Matches data.method
+]
+```
+
+#### No Data Filtering with StrictMode
+**Cause:** `strictMode` is enabled but no `specific` configuration provided.
+
+**Solution:**
+```javascript
+// ❌ Wrong: strictMode=true but no specific config
+const alert = new TelegramAlert({
+    botToken: 'token',
+    chatId: 'chat',
+    strictMode: true  // Will return original data if no specific config
+})
+
+// ✅ Correct: Provide specific configuration
+const alert = new TelegramAlert({
+    botToken: 'token', 
+    chatId: 'chat',
+    strictMode: true,
+    specific: [
+        { key: 'user', title: '👤 User' },
+        { key: 'error_code', title: '🔴 Error' }
+    ]
+})
+```
+
+### 🎯 Best Practices
+
+#### 1. **Field Naming Consistency**
+```javascript
+// ✅ Use consistent field names across your application
+const standardFields = [
+    { key: 'user', title: '👤 User' },
+    { key: 'method', title: '📨 Method' },  
+    { key: 'status', title: '📊 Status' },
+    { key: 'error_code', title: '🔴 Error Code' },
+    { key: 'curl', title: '💻 cURL Command' }
+]
+```
+
+#### 2. **Sensitive Data Protection**
+```javascript
+// ✅ Use strictMode for production channels
+const productionAlert = new MultiChannelAlert({
+    channels: [
+        {
+            type: 'telegram',
+            config: { 
+                botToken: process.env.TELEGRAM_TOKEN,
+                chatId: process.env.TELEGRAM_CHAT_ID,
+                strictMode: true  // Filter sensitive data
+            }
+        }
+    ],
+    specific: [
+        { key: 'user', title: '👤 User' },
+        { key: 'error_code', title: '🔴 Error' }
+        // Sensitive fields like passwords, tokens are automatically excluded
+    ]
+})
+```
+
+#### 3. **Platform-Specific Formatting**
+```javascript
+// ✅ Let the library handle platform-specific formatting
+const data = {
+    user: 'john_doe',
+    metadata: { session_id: '123', ip: '192.168.1.1' },  // Object - auto JSON formatted
+    curl: 'curl -X POST https://api.com',                 // Auto code block
+    error_stack: 'Error\n  at function()\n  at ...'      // Auto truncated
+}
+
+// Library automatically formats:
+// - Objects as JSON code blocks
+// - Curl commands as bash code blocks  
+// - Stack traces with truncation
+// - Titles with emojis
+```
+
+#### 4. **Configuration Inheritance**
+```javascript
+// ✅ Use global config with channel overrides
+const multiAlert = new MultiChannelAlert({
+    channels: [
+        {
+            type: 'telegram',
+            config: { 
+                botToken: 'token',
+                chatId: 'chat-id',
+                specific: [  // Override global specific for this channel
+                    { key: 'user', title: '👤 User' },
+                    { key: 'error_code', title: '🔴 Error' }
+                ]
+            }
+        },
+        {
+            type: 'slack',
+            config: { 
+                webhookUrl: 'webhook-url'
+                // Uses global specific configuration
+            }
+        }
+    ],
+    specific: [  // Global configuration
+        { key: 'user', title: '👤 User' },
+        { key: 'method', title: '📨 Method' },
+        { key: 'status', title: '📊 Status' }
+    ],
+    strictMode: true
+})
+```
+
 ## API Reference
 
 ### Multi-Channel Alerts
@@ -1213,8 +1725,14 @@ Create a webhook client for production.
 
 ## Version History
 
+- **v2.0.1** (2025-10-01): 
+  - 🐛 **Fixed**: Data filtering bug in MultiChannelAlert (`item.field` → `item.key`)
+  - 🎨 **Enhanced**: Mattermost message formatting with emoji titles and code blocks
+  - 🎛️ **Added**: Individual component `strictMode` support (TelegramAlert, SlackAlert, MattermostAlert)
+  - 📝 **Improved**: Cross-platform formatting consistency for JSON objects and curl commands
+  - 🔧 **Added**: Comprehensive data filtering utilities with backward compatibility
 - **v2.0.0** (2025-09-29): Multi-channel alert system, logger-style API, conditional channels
-- **v1.1.1** (2025): Enhanced Telegram formatting, smart ID extraction
+- **v1.1.1** (2025): Enhanced Telegram formatting, smart ID extraction  
 - **v1.0.0** (2025): Initial release with Telegram bot and logging
 
 ## Best Practices

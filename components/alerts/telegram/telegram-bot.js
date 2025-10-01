@@ -16,6 +16,7 @@ class TelegramAlert {
      * @param {Object} config.messageThreadIds - Nested thread IDs configuration
      * @param {boolean} config.beauty - Enable markdown formatting (optional, default: true)
      * @param {Array} config.specific - Specific field configurations (optional)
+     * @param {boolean} config.strictMode - Enable data filtering based on specific fields (optional, default: false)
      * @param {string} config.action - Action type for thread routing (optional, default: 'all')
      */
     constructor(config) {
@@ -33,6 +34,7 @@ class TelegramAlert {
             messageThreadIds = {},
             beauty = true,
             specific = [],
+            strictMode = false,
             action = 'all'
         } = config
 
@@ -55,6 +57,7 @@ class TelegramAlert {
             messageThreadIds,
             beauty,
             specific,
+            strictMode,
             action
         }
     }

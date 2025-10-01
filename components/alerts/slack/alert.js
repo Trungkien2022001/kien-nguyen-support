@@ -1,4 +1,4 @@
-const { httpClient } = require('../../../utils')
+const { httpClient, filterDataBySpecific } = require('../../../utils')
 
 /**
  * Build Slack message with beauty formatting options
@@ -245,14 +245,17 @@ async function sendMessage(data, options = {}) {
 
     // Merge with instance config
     const config = { ...this.config, ...options }
-    const { webhookUrl, timeout = 5000 } = config
+    const { webhookUrl, timeout = 5000, specific, strictMode } = config
 
     if (!webhookUrl) {
         throw new Error('webhookUrl is required')
     }
 
     try {
-        const payload = buildSlackPayload(data, config)
+        // Apply data filtering if strictMode is enabled
+        const filteredData = filterDataBySpecific(data, specific, strictMode)
+
+        const payload = buildSlackPayload(filteredData, config)
 
         await httpClient.post(webhookUrl, payload, {
             timeout,

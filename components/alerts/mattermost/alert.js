@@ -1,4 +1,4 @@
-const { httpClient } = require('../../../utils')
+const { httpClient, filterDataBySpecific } = require('../../../utils')
 
 /**
  * Get type emoji for Mattermost messages
@@ -63,30 +63,49 @@ function buildMattermostMessage(
         specific.forEach(fieldConfig => {
             const value = data[fieldConfig.key]
             if (value != null) {
-                const label = fieldConfig.label || fieldConfig.key
-                lines.push(`**${label}:** \`${value}\``)
+                const label =
+                    fieldConfig.title || fieldConfig.label || fieldConfig.key
+
+                // Special formatting for different data types
+                if (typeof value === 'object') {
+                    lines.push(`**${label}:**`)
+                    lines.push('```json')
+                    lines.push(JSON.stringify(value, null, 2))
+                    lines.push('```')
+                } else if (
+                    fieldConfig.key === 'curl' ||
+                    fieldConfig.key === 'curl_command'
+                ) {
+                    lines.push(`**${label}:**`)
+                    lines.push('```bash')
+                    lines.push(value)
+                    lines.push('```')
+                } else {
+                    lines.push(`**${label}:** \`${value}\``)
+                }
             }
         })
-    }
+    } else {
+        // Auto-display all object properties when no specific config
+        Object.keys(data).forEach(key => {
+            if (data[key] != null) {
+                const value = data[key]
 
-    // Auto-display remaining object properties
-    Object.keys(data).forEach(key => {
-        // Skip if already handled in specific fields
-        const isSpecific =
-            specific && specific.some(fieldConfig => fieldConfig.key === key)
-        if (!isSpecific && data[key] != null) {
-            lines.push(`**${key}:** \`${data[key]}\``)
-        }
-    })
-
-    // Special handling for curl commands or long text
-    const curlCommand = data.curl || data.curl_command
-    if (curlCommand) {
-        lines.push('')
-        lines.push('**Curl Command:**')
-        lines.push('```bash')
-        lines.push(curlCommand)
-        lines.push('```')
+                if (typeof value === 'object') {
+                    lines.push(`**${key}:**`)
+                    lines.push('```json')
+                    lines.push(JSON.stringify(value, null, 2))
+                    lines.push('```')
+                } else if (key === 'curl' || key === 'curl_command') {
+                    lines.push(`**${key}:**`)
+                    lines.push('```bash')
+                    lines.push(value)
+                    lines.push('```')
+                } else {
+                    lines.push(`**${key}:** \`${value}\``)
+                }
+            }
+        })
     }
 
     lines.push('------------------------')
@@ -132,9 +151,13 @@ function buildMattermostPayload(data, options) {
 async function sendMessage(data, options = {}) {
     // Merge with instance config
     const config = { ...this.config, ...options }
+    const { specific, strictMode } = config
 
     try {
-        const payload = buildMattermostPayload(data, config)
+        // Apply data filtering if strictMode is enabled
+        const filteredData = filterDataBySpecific(data, specific, strictMode)
+
+        const payload = buildMattermostPayload(filteredData, config)
 
         const headers = {
             'Content-Type': 'application/json',

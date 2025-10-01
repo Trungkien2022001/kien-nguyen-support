@@ -2,16 +2,21 @@
 /* eslint-disable no-console */
 /* eslint-disable prettier/prettier */
 /* eslint-disable no-underscore-dangle */
-const {
-    SlackAlert,
-    DiscordAlert,
-    MessengerAlert,
-    MattermostAlert,
-    N8nAlert,
-    TelegramAlert,
-    ZaloAlert,
-    EmailAlert
-} = require('../index')
+const SlackAlert = require('../slack/slack-client')
+const DiscordAlert = require('../discord/discord-client')
+const MessengerAlert = require('../messenger/messenger-client')
+const MattermostAlert = require('../mattermost/mattermost-client')
+const N8nAlert = require('../n8n/n8n-client')
+const TelegramAlert = require('../telegram/telegram-bot')
+const ZaloAlert = require('../zalo/zalo-client')
+const EmailAlert = require('../email/email-client')
+const WhatsAppAlert = require('../whatsapp/whatsapp-client')
+const LineAlert = require('../line/line-client')
+const ViberAlert = require('../viber/viber-client')
+const SkypeAlert = require('../skype/skype-client')
+const WeChatAlert = require('../wechat/wechat-client')
+const RocketChatAlert = require('../rocketchat/rocketchat-client')
+const FirebaseAlert = require('../firebase/firebase-client')
 
 /**
  * MultiChannelAlert - Send alerts to multiple channels simultaneously
@@ -70,26 +75,37 @@ class MultiChannelAlert {
      * @param {string} config.service Service name (hotel, flight, etc.)
      * @param {string} config.environment Environment (STAGING, PRODUCTION, etc.)
      * @param {boolean} config.failSilently If true, don't throw errors when some channels fail
+     * @param {boolean} config.beauty Global beauty setting for all channels
+     * @param {Array} config.specific Global specific field configurations
+     * @param {boolean} config.strictMode If true, only log keys defined in specific array
      */
     constructor(config) {
         const {
             channels = [],
             service = 'hotel',
             environment = 'STAGING',
-            failSilently = true
+            failSilently = true,
+            beauty = true,
+            specific = [],
+            strictMode = false
         } = config
 
         this.channels = []
         this.service = service
         this.environment = environment
         this.failSilently = failSilently
+        
+        // Global settings
+        this.globalBeauty = beauty
+        this.globalSpecific = specific
+        this.strictMode = strictMode
 
         // Initialize all configured alert channels
         this._initializeChannels(channels)
     }
 
     /**
-     * Initialize alert channels from configuration
+     * Initialize alert channels from configuration with inheritance
      * @private
      */
     _initializeChannels(channelConfigs) {
@@ -101,7 +117,14 @@ class MultiChannelAlert {
             n8n: N8nAlert,
             telegram: TelegramAlert,
             zalo: ZaloAlert,
-            email: EmailAlert
+            email: EmailAlert,
+            whatsapp: WhatsAppAlert,
+            line: LineAlert,
+            viber: ViberAlert,
+            skype: SkypeAlert,
+            wechat: WeChatAlert,
+            rocketchat: RocketChatAlert,
+            firebase: FirebaseAlert
         }
 
         channelConfigs.forEach((channelConfig, index) => {
@@ -110,7 +133,7 @@ class MultiChannelAlert {
 
                 if (!type) {
                     console.warn(`MultiChannelAlert: Channel at index ${index} missing 'type' property`)
-
+                    
                     return
                 }
 
@@ -118,16 +141,12 @@ class MultiChannelAlert {
 
                 if (!AlertClass) {
                     console.warn(`MultiChannelAlert: Unknown alert type '${type}' at index ${index}`)
-
+                    
                     return
                 }
 
-                // Merge service and environment if not provided in channel config
-                const finalConfig = {
-                    service: this.service,
-                    environment: this.environment,
-                    ...alertConfig
-                }
+                // Apply inheritance: channel config > global config > default values
+                const finalConfig = this._applyConfigInheritance(alertConfig || {})
 
                 const alertInstance = new AlertClass(finalConfig)
 
@@ -150,6 +169,33 @@ class MultiChannelAlert {
     }
 
     /**
+     * Apply configuration inheritance: channel > global > default
+     * @param {Object} channelConfig Channel-specific configuration
+     * @returns {Object} Final configuration with inheritance applied
+     * @private
+     */
+    _applyConfigInheritance(channelConfig) {
+        // Base configuration with global settings
+        const finalConfig = {
+            service: this.service,
+            environment: this.environment,
+            beauty: this.globalBeauty,
+            specific: this.globalSpecific,
+            ...channelConfig // Channel config overrides global
+        }
+
+        return finalConfig
+    }
+
+    /**
+     * Filter data object based on specific field configuration
+     * @param {Object} data Original data object
+     * @param {Array} specific Array of allowed fields or field configurations
+     * @returns {Object} Filtered data object
+     * @private
+     */
+
+    /**
      * Send alert to all configured channels
      * @private
      */
@@ -160,7 +206,11 @@ class MultiChannelAlert {
         // Send alerts to all channels in parallel
         const promises = this.channels.map(async (channel) => {
             try {
-                const result = await channel.instance[method](data)
+                // Filter data based on channel's specific configuration or global specific
+                const channelSpecific = channel.config.specific || this.globalSpecific
+                const filteredData = this._filterDataBySpecific(data, channelSpecific)
+                
+                const result = await channel.instance[method](filteredData)
                 results.push({
                     type: channel.type,
                     success: true,
@@ -209,6 +259,34 @@ class MultiChannelAlert {
                 failed: failureCount
             }
         }
+    }
+
+    /**
+     * Filter data object based on specific field configuration
+     * @param {Object} data Original data object
+     * @param {Array} specific Array of allowed fields or field configurations
+     * @returns {Object} Filtered data object
+     * @private
+     */
+    _filterDataBySpecific(data, specific) {
+        // If no specific configuration or strictMode disabled, return all data
+        if (!specific || specific.length === 0 || !this.strictMode) {
+            return data
+        }
+
+        const allowedFields = specific.map(item => 
+            typeof item === 'string' ? item : (item.key || item.field)  // Support both key and field properties
+        )
+
+        const filteredData = {}
+        
+        allowedFields.forEach(field => {
+            if (field && Object.prototype.hasOwnProperty.call(data, field)) {
+                filteredData[field] = data[field]
+            }
+        })
+
+        return filteredData
     }
 
     /**

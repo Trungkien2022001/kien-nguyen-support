@@ -14,6 +14,7 @@ class MattermostAlert {
      * @param {number} config.timeout - Request timeout in ms (optional, default: 10000)
      * @param {boolean} config.beauty - Enable rich formatting (optional, default: true)
      * @param {Array} config.specific - Specific field configurations (optional)
+     * @param {boolean} config.strictMode - Enable data filtering based on specific fields (optional, default: false)
      */
     constructor(config) {
         if (!config) {
@@ -27,7 +28,8 @@ class MattermostAlert {
             environment = 'STAGING',
             timeout = 10000,
             beauty = true,
-            specific = []
+            specific = [],
+            strictMode = false
         } = config
 
         // Validate required fields
@@ -49,7 +51,8 @@ class MattermostAlert {
             environment,
             timeout,
             beauty,
-            specific
+            specific,
+            strictMode
         }
     }
 
