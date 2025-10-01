@@ -1,6 +1,6 @@
 {
   "name": "kien-nguyen-support",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Multi-channel alert system and utilities package for logging, notifications, and webhook management",
   "main": "index.js",
   "scripts": {
@@ -62,7 +62,7 @@
     }
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=10.0.0"
   },
   "types": "types.d.ts",
   "files": [
