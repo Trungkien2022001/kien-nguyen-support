@@ -57,7 +57,7 @@ npm install @kien2k1/multi-channel-alert
 
 ### 📦 Package Information
 - **Package Name:** `@kien2k1/multi-channel-alert`
-- **Version:** `1.0.0`
+- **Version:** `1.0.2`
 - **Size:** 56.8 kB (324.9 kB unpacked)
 - **Dependencies:** Zero runtime dependencies
 - **NPM Registry:** https://www.npmjs.com/package/@kien2k1/multi-channel-alert
@@ -1733,9 +1733,18 @@ Create a webhook client for production.
 
 ## Version History
 
+- **v1.0.2** (2025-10-03): 
+  - 🔧 **TypeScript Definitions**: Improved AlertData interface for better flexibility
+  - 📝 **Documentation**: Updated package information and links
+  - 🐛 **Bug Fixes**: Minor fixes and improvements
+
+- **v1.0.1** (2025-10-02): 
+  - 📦 **Package Updates**: Updated package name to `@kien2k1/multi-channel-alert`
+  - 🔗 **Links**: Updated NPM registry links and documentation
+
 - **v1.0.0** (2025-10-02): 
-  - � **NEW PACKAGE**: Published as `@kien2k1/multi-channel-alert`
-  - � **MultiChannelAlert System**: Send alerts to 15+ platforms simultaneously
+  - 🚀 **NEW PACKAGE**: Published as `@kien2k1/multi-channel-alert`
+  - 🎯 **MultiChannelAlert System**: Send alerts to 15+ platforms simultaneously
   - 📱 **Supported Platforms**: Telegram, Slack, Mattermost, Discord, Email, WhatsApp, Zalo, LINE, Viber, Skype, WeChat, RocketChat, Firebase, N8n, Messenger
   - 🎛️ **Advanced Features**: StrictMode data filtering, individual component support
   - 🎨 **Rich Formatting**: Platform-specific markdown, emoji titles, code blocks

@@ -16,49 +16,49 @@ declare module '@kien2k1/multi-channel-alert' {
    * Standard alert data interface - flexible structure for all alert types
    */
   export interface AlertData {
-    /** Main alert message content */
-    message?: string;
-    /** Error message (alternative to message) */
-    error_message?: string;
-    /** Error code identifier */
-    error_code?: string;
-    /** Error stack trace */
-    error_stack?: string;
-    /** User identifier */
-    user_id?: string;
-    /** User email address */
-    user_email?: string;
-    /** Booking/reservation identifier */
-    booking_id?: string;
-    /** Search session identifier */
-    search_id?: string;
-    /** Distributed tracing identifier */
-    trace_id?: string;
-    /** Log entry identifier */
-    log_id?: string;
-    /** Request identifier */
-    request_id?: string;
-    /** Third-party supplier information */
-    supplier?: {
-      /** Supplier code/name */
-      code?: string;
-      /** Supplier numeric ID */
-      id?: number | string;
-      /** Supplier source identifier */
-      source_id?: string;
-      /** Contract identifier with supplier */
-      contract_id?: string;
-      /** Supplier username/login */
-      user_name?: string;
-    };
-    /** HTTP request metadata */
-    request_metadata?: any;
-    /** Additional metadata object */
-    metadata?: any;
-    /** Environment context */
-    environment?: EnvironmentType;
-    /** Service context */
-    service?: ServiceType;
+    // /** Main alert message content */
+    // message?: string;
+    // /** Error message (alternative to message) */
+    // error_message?: string;
+    // /** Error code identifier */
+    // error_code?: string;
+    // /** Error stack trace */
+    // error_stack?: string;
+    // /** User identifier */
+    // user_id?: string;
+    // /** User email address */
+    // user_email?: string;
+    // /** Booking/reservation identifier */
+    // booking_id?: string;
+    // /** Search session identifier */
+    // search_id?: string;
+    // /** Distributed tracing identifier */
+    // trace_id?: string;
+    // /** Log entry identifier */
+    // log_id?: string;
+    // /** Request identifier */
+    // request_id?: string;
+    // /** Third-party supplier information */
+    // supplier?: {
+    //   /** Supplier code/name */
+    //   code?: string;
+    //   /** Supplier numeric ID */
+    //   id?: number | string;
+    //   /** Supplier source identifier */
+    //   source_id?: string;
+    //   /** Contract identifier with supplier */
+    //   contract_id?: string;
+    //   /** Supplier username/login */
+    //   user_name?: string;
+    // };
+    // /** HTTP request metadata */
+    // request_metadata?: any;
+    // /** Additional metadata object */
+    // metadata?: any;
+    // /** Environment context */
+    // environment?: EnvironmentType;
+    // /** Service context */
+    // service?: ServiceType;
     /** Additional dynamic properties */
     [key: string]: any;
   }
