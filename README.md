@@ -57,8 +57,8 @@ npm install @kien2k1/multi-channel-alert
 
 ### 📦 Package Information
 - **Package Name:** `@kien2k1/multi-channel-alert`
-- **Version:** `1.0.2`
-- **Size:** 56.8 kB (324.9 kB unpacked)
+- **Version:** `1.0.3`
+- **Size:** 57.3 kB (326.3 kB unpacked)
 - **Dependencies:** Zero runtime dependencies
 - **NPM Registry:** https://www.npmjs.com/package/@kien2k1/multi-channel-alert
 
@@ -1732,6 +1732,11 @@ Create a webhook client for production.
 - **PRODUCTION**: Production environment
 
 ## Version History
+
+- **v1.0.3** (2025-10-03): 
+  - 🎨 **Mattermost Formatting**: Enhanced markdown support and code block formatting
+  - 🔧 **Improvements**: Better console logging and error handling
+  - 📝 **Code Quality**: Cleaner output and reduced verbose logging
 
 - **v1.0.2** (2025-10-03): 
   - 🔧 **TypeScript Definitions**: Improved AlertData interface for better flexibility
