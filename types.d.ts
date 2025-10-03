@@ -1,4 +1,4 @@
-declare module 'kien-nguyen-support' {
+declare module '@kien2k1/multi-channel-alert' {
   /**
    * Common type definitions
    */

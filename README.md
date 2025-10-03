@@ -1,4 +1,4 @@
-# 🚨 MultiChannelAlert - @kien2k1/multi-channel-alert
+# 🚨 MultiChannelAlert
 
 <div align="center">
   <h2>🎯 The Ultimate Multi-Channel Alert & Notification System</h2>
