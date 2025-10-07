@@ -45,19 +45,16 @@ const FirebaseAlert = require('../firebase/firebase-client')
  *         service: 'hotel',
  *         environment: 'PRODUCTION'
  *       }
- *     },
- *     {
- *       type: 'slack',
- *       config: {
- *         webhookUrl: 'https://hooks.slack.com/...',
- *         service: 'hotel',
- *         environment: 'PRODUCTION'
- *       }
  *     }
  *   ],
  *   service: 'hotel',
- *   environment: 'PRODUCTION'
+ *   environment: 'PRODUCTION',
+ *   healthCheck: true  // Send hello message to all channels after initialization
  * })
+ * 
+ * // Or manually trigger health check later
+ * const healthResult = await multiAlert.runHealthCheck()
+ * console.log(`Health Check: ${healthResult.summary.successful}/${healthResult.summary.total} channels healthy`)
  * 
  * // Send error to all configured channels
  * await multiAlert.error({
@@ -78,6 +75,7 @@ class MultiChannelAlert {
      * @param {boolean} config.beauty Global beauty setting for all channels
      * @param {Array} config.specific Global specific field configurations
      * @param {boolean} config.strictMode If true, only log keys defined in specific array
+     * @param {boolean} config.healthCheck If true, send hello message to all channels after initialization
      */
     constructor(config) {
         const {
@@ -87,7 +85,8 @@ class MultiChannelAlert {
             failSilently = true,
             beauty = true,
             specific = [],
-            strictMode = false
+            strictMode = false,
+            healthCheck = false
         } = config
 
         this.channels = []
@@ -99,9 +98,15 @@ class MultiChannelAlert {
         this.globalBeauty = beauty
         this.globalSpecific = specific
         this.strictMode = strictMode
+        this.healthCheck = healthCheck
 
         // Initialize all configured alert channels
         this._initializeChannels(channels)
+
+        // Send hello message if healthCheck is enabled
+        if (this.healthCheck) {
+            this._sendHealthCheckMessage()
+        }
     }
 
     /**
@@ -166,6 +171,35 @@ class MultiChannelAlert {
         })
 
         // console.log(`MultiChannelAlert: Successfully initialized ${this.channels.length} channels`)
+    }
+
+    /**
+     * Send health check message to all channels for testing connectivity
+     * @private
+     */
+    async _sendHealthCheckMessage() {
+        const timestamp = new Date().toISOString()
+        const healthCheckData = {
+            message: '✅ MultiChannelAlert Health Check',
+            status: 'HEALTHY',
+            service: this.service,
+            environment: this.environment,
+            channels_count: this.channels.length,
+            timestamp,
+            health_check: true
+        }
+
+        try {
+            const result = await this._sendToAllChannels('info', healthCheckData)
+
+            return result
+        } catch (error) {
+            if (!this.failSilently) {
+                throw error
+            }
+
+            return null
+        }
     }
 
     /**
@@ -319,6 +353,14 @@ class MultiChannelAlert {
      */
     async success(data) {
         return await this._sendToAllChannels('success', data)
+    }
+
+    /**
+     * Manually trigger health check for all channels
+     * @returns {Object} Health check results with channel status
+     */
+    async runHealthCheck() {
+        return await this._sendHealthCheckMessage()
     }
 
     /**
