@@ -125,6 +125,8 @@ declare module '@kien2k1/multi-channel-alert' {
     strictMode?: boolean;
     /** Continue sending to other channels if some fail (default: true) */
     failSilently?: boolean;
+    /** Send health check message to all channels after initialization (default: false) */
+    healthCheck?: boolean;
   }
 
   export interface ChannelConfig {
@@ -158,6 +160,7 @@ declare module '@kien2k1/multi-channel-alert' {
     info(data: AlertData): Promise<MultiChannelResult>;
     warn(data: AlertData): Promise<MultiChannelResult>;
     success(data: AlertData): Promise<MultiChannelResult>;
+    runHealthCheck(): Promise<MultiChannelResult>;
     getChannels(): Array<{ type: AlertChannelType; service?: ServiceType; environment?: EnvironmentType }>;
     getChannelCount(): number;
     hasChannel(type: AlertChannelType): boolean;

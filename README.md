@@ -402,7 +402,8 @@ const multiAlert = new MultiChannelAlert({
     ],
     service: 'hotel',
     environment: 'PRODUCTION',
-    failSilently: true  // Continue if some channels fail
+    failSilently: true,  // Continue if some channels fail
+    healthCheck: true    // 🏥 NEW: Send hello message to test all channels
 })
 
 // Send alerts using logger-style methods
@@ -501,6 +502,42 @@ await multiAlert.error(alertData)
 - 🔒 **Data Privacy**: Filter sensitive fields from certain channels  
 - ⚡ **Performance**: Reduce message size by filtering unnecessary data
 - 🎛️ **Flexibility**: Different field sets per channel type
+
+### 🏥 Health Check Feature (NEW in v1.0.3)
+
+Test all channels connectivity automatically or manually:
+
+```javascript
+// 🏥 Automatic health check on initialization
+const multiAlert = new MultiChannelAlert({
+    channels: [
+        { type: 'telegram', config: { botToken: 'xxx', chatId: 'yyy' } },
+        { type: 'slack', config: { webhookUrl: 'zzz' } }
+    ],
+    healthCheck: true  // Send "✅ MultiChannelAlert Health Check" to all channels
+})
+
+// Console output:
+// 🏥 MultiChannelAlert: Sending health check message to all channels...
+// ✅ Health Check: 2/2 channels responded successfully
+
+// 🔧 Manual health check anytime
+const healthResult = await multiAlert.runHealthCheck()
+console.log(`Health: ${healthResult.summary.successful}/${healthResult.summary.total} channels healthy`)
+
+// Health check message includes:
+// - ✅ Status: HEALTHY
+// - 🔧 Service & Environment info  
+// - 📊 Channel count
+// - ⏰ Timestamp
+// - 🏥 Health check flag
+```
+
+**Benefits:**
+- 🚀 **Instant Validation**: Test all channels work after setup
+- 🔍 **Connectivity Check**: Verify tokens, webhooks, and network
+- 📊 **Channel Status**: See which channels are healthy/failed
+- 🛠️ **Troubleshooting**: Identify configuration issues quickly
 
 ### Conditional Channel Initialization
 
@@ -1500,6 +1537,7 @@ Create a multi-channel alert instance.
 - `service` (string, optional): Default service name ('hotel', 'flight', 'tour', 'transfer')
 - `environment` (string, optional): Default environment ('DEV', 'STAGING', 'PRODUCTION')
 - `failSilently` (boolean, optional): Don't throw errors if some channels fail (default: true)
+- `healthCheck` (boolean, optional): Send health check message to all channels after initialization (default: false)
 
 **Channel Configuration:**
 ```javascript
@@ -1528,6 +1566,9 @@ await multiAlert.warn(data)
 
 // Success alert (green/positive styling)
 await multiAlert.success(data)
+
+// Health check (test all channels connectivity)
+await multiAlert.runHealthCheck()
 ```
 
 #### Management Methods
@@ -1738,7 +1779,7 @@ Create a webhook client for production.
   - 🔧 **Improvements**: Better console logging and error handling
   - 📝 **Code Quality**: Cleaner output and reduced verbose logging
 
-- **v1.0.2** (2025-10-03): 
+- **v1.0.3** (2025-10-03): 
   - 🔧 **TypeScript Definitions**: Improved AlertData interface for better flexibility
   - 📝 **Documentation**: Updated package information and links
   - 🐛 **Bug Fixes**: Minor fixes and improvements
