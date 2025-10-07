@@ -80,8 +80,13 @@ function buildMattermostMessage(
                     lines.push('```bash')
                     lines.push(value)
                     lines.push('```')
+                } else if (fieldConfig.markdown) {
+                    lines.push(`**${label}:**`)
+                    lines.push('```')
+                    lines.push(value)
+                    lines.push('```')
                 } else {
-                    lines.push(`**${label}:** \`${value}\``)
+                    lines.push(`**${label}:** ${value}`)
                 }
             }
         })
@@ -102,7 +107,10 @@ function buildMattermostMessage(
                     lines.push(value)
                     lines.push('```')
                 } else {
-                    lines.push(`**${key}:** \`${value}\``)
+                    lines.push(`**${key}:**`)
+                    lines.push('```')
+                    lines.push(value)
+                    lines.push('```')
                 }
             }
         })

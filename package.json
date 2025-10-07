@@ -1,6 +1,6 @@
 {
-  "name": "kien-nguyen-support",
-  "version": "2.0.1",
+  "name": "@kien2k1/multi-channel-alert",
+  "version": "1.0.3",
   "description": "🚨 MultiChannelAlert - Ultimate multi-channel alert system supporting 15+ platforms (Telegram, Slack, Discord, Email, WhatsApp, Zalo, etc.) with zero dependencies. Advanced logging, notifications, and webhook management with enhanced formatting and smart routing.",
   "main": "index.js",
   "scripts": {
@@ -22,7 +22,7 @@
     "notifications",
     "telegram",
     "slack",
-    "mattermost", 
+    "mattermost",
     "discord",
     "email",
     "whatsapp",
@@ -78,6 +78,9 @@
   },
   "engines": {
     "node": ">=10.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "types": "types.d.ts",
   "files": [

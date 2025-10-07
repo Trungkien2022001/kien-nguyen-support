@@ -1,8 +1,9 @@
-# 🚨 MultiChannelAlert - Kien Nguyen Support
+# 🚨 MultiChannelAlert
 
 <div align="center">
   <h2>🎯 The Ultimate Multi-Channel Alert & Notification System</h2>
   <p><strong>Send alerts to 15+ platforms simultaneously with zero dependencies!</strong></p>
+  <p>📦 <strong>NPM Package:</strong> <a href="https://www.npmjs.com/package/@kien2k1/multi-channel-alert">@kien2k1/multi-channel-alert</a></p>
 </div>
 
 ## 📱 Supported Platforms
@@ -51,8 +52,15 @@ A comprehensive **MultiChannelAlert system** and utilities package for logging, 
 ## Installation
 
 ```bash
-npm install kien-nguyen-support
+npm install @kien2k1/multi-channel-alert
 ```
+
+### 📦 Package Information
+- **Package Name:** `@kien2k1/multi-channel-alert`
+- **Version:** `1.0.3`
+- **Size:** 57.3 kB (326.3 kB unpacked)
+- **Dependencies:** Zero runtime dependencies
+- **NPM Registry:** https://www.npmjs.com/package/@kien2k1/multi-channel-alert
 
 ## 🌟 Why MultiChannelAlert?
 
@@ -76,7 +84,7 @@ npm install kien-nguyen-support
         <p>One simple import, zero dependencies</p>
         <code>
           const { MultiChannelAlert }<br/>
-          = require('kien-nguyen-support')<br/>
+          = require('@kien2k1/multi-channel-alert')<br/>
           <br/>
           // Send to 15+ platforms<br/>
           multiAlert.error('Alert!')<br/>
@@ -287,7 +295,7 @@ const {
     SlackAlert, 
     saveProviderLog, 
     createTelegramWebhookClient 
-} = require('kien-nguyen-support')
+} = require('@kien2k1/multi-channel-alert')
 
 // Feature 1: Multi-Channel Alerts (NEW in v2.0.0)
 const multiAlert = new MultiChannelAlert({
@@ -348,7 +356,7 @@ Send alerts to multiple platforms simultaneously with a single command.
 ### MultiChannelAlert Class (NEW)
 
 ```javascript
-const { MultiChannelAlert } = require('kien-nguyen-support')
+const { MultiChannelAlert } = require('@kien2k1/multi-channel-alert')
 
 // Initialize with multiple channels
 const multiAlert = new MultiChannelAlert({
@@ -553,7 +561,7 @@ console.log(`Sent to ${result.summary.successful}/${result.summary.total} channe
 Each alert component now supports individual `strictMode` for data filtering:
 
 ```javascript
-const { TelegramAlert, SlackAlert, MattermostAlert } = require('kien-nguyen-support')
+const { TelegramAlert, SlackAlert, MattermostAlert } = require('@kien2k1/multi-channel-alert')
 
 // TelegramAlert with strictMode
 const telegramAlert = new TelegramAlert({
@@ -634,7 +642,7 @@ You can also use individual alert classes directly:
    - Find `chat.id` in the response
 
 ```javascript
-const { TelegramAlert } = require('kien-nguyen-support')
+const { TelegramAlert } = require('@kien2k1/multi-channel-alert')
 
 const telegram = new TelegramAlert({
     botToken: 'your-bot-token',        // From @BotFather
@@ -666,7 +674,7 @@ await telegram.error({ message: 'Error occurred' })
    - Select channel and copy webhook URL
 
 ```javascript
-const { SlackAlert } = require('kien-nguyen-support')
+const { SlackAlert } = require('@kien2k1/multi-channel-alert')
 
 const slack = new SlackAlert({
     webhookUrl: 'https://hooks.slack.com/services/...',  // From Slack App
@@ -695,7 +703,7 @@ await slack.error({ message: 'Error occurred' })
    - Or use channel name (e.g., "town-square")
 
 ```javascript
-const { MattermostAlert } = require('kien-nguyen-support')
+const { MattermostAlert } = require('@kien2k1/multi-channel-alert')
 
 const mattermost = new MattermostAlert({
     url: 'https://your-mattermost.com',      // Mattermost server URL
@@ -717,7 +725,7 @@ await mattermost.error({ message: 'Error occurred' })
    - Use app password (not your regular password)
 
 ```javascript
-const { EmailAlert } = require('kien-nguyen-support')
+const { EmailAlert } = require('@kien2k1/multi-channel-alert')
 
 const email = new EmailAlert({
     host: 'smtp.gmail.com',              // SMTP host
@@ -745,7 +753,7 @@ await email.error({ message: 'Error occurred' })
    - Copy webhook URL
 
 ```javascript
-const { DiscordAlert } = require('kien-nguyen-support')
+const { DiscordAlert } = require('@kien2k1/multi-channel-alert')
 
 const discord = new DiscordAlert({
     webhookUrl: 'https://discord.com/api/webhooks/...',  // Discord webhook URL
@@ -769,7 +777,7 @@ await discord.error({ message: 'Error occurred' })
    - Use Zalo API to get follower user IDs
 
 ```javascript
-const { ZaloAlert } = require('kien-nguyen-support')
+const { ZaloAlert } = require('@kien2k1/multi-channel-alert')
 
 const zalo = new ZaloAlert({
     accessToken: 'your-oa-access-token',     // OA access token
@@ -795,7 +803,7 @@ await zalo.error({ message: 'Error occurred' })
    - Get recipient PSID from webhook events
 
 ```javascript
-const { MessengerAlert } = require('kien-nguyen-support')
+const { MessengerAlert } = require('@kien2k1/multi-channel-alert')
 
 const messenger = new MessengerAlert({
     pageAccessToken: 'your-page-access-token',   // Facebook page access token
@@ -816,7 +824,7 @@ await messenger.error({ message: 'Error occurred' })
    - Copy the webhook URL
 
 ```javascript
-const { N8nAlert } = require('kien-nguyen-support')
+const { N8nAlert } = require('@kien2k1/multi-channel-alert')
 
 const n8n = new N8nAlert({
     webhookUrl: 'https://your-n8n.com/webhook/...',     // N8n webhook URL
@@ -832,7 +840,7 @@ await n8n.error({ message: 'Error occurred' })
 Save API request/response logs and curl commands to organized files:
 
 ```javascript
-const { saveProviderLog, saveProviderCurl } = require('kien-nguyen-support')
+const { saveProviderLog, saveProviderCurl } = require('@kien2k1/multi-channel-alert')
 
 // Save request/response logs
 await saveProviderLog({
@@ -868,7 +876,7 @@ await saveProviderCurl({
 Pre-configured client with smart thread routing:
 
 ```javascript
-const { TelegramClient } = require('kien-nguyen-support')
+const { TelegramClient } = require('@kien2k1/multi-channel-alert')
 
 /**
  * Initialize TelegramClient
@@ -983,7 +991,7 @@ await telegram.sendErrorAlert({
 ### Factory Function (Alternative)
 
 ```javascript
-const { createTelegramClient } = require('kien-nguyen-support')
+const { createTelegramClient } = require('@kien2k1/multi-channel-alert')
 
 const telegramClient = createTelegramClient({
     botToken: process.env.TELEGRAM_BOT_TOKEN,
@@ -1044,7 +1052,7 @@ messageThreadIds: {
 Manage webhooks for production deployment:
 
 ```javascript
-const { createTelegramWebhookClient } = require('kien-nguyen-support')
+const { createTelegramWebhookClient } = require('@kien2k1/multi-channel-alert')
 
 /**
  * Initialize webhook client
@@ -1136,7 +1144,7 @@ Create a shared multi-channel client for your entire project:
 
 ```javascript
 // config/alert-client.js
-const { MultiChannelAlert } = require('kien-nguyen-support')
+const { MultiChannelAlert } = require('@kien2k1/multi-channel-alert')
 
 // Initialize channels based on available environment variables
 const channels = []
@@ -1219,7 +1227,7 @@ async function bookHotel(hotelData) {
 
 ```javascript
 // services/flight-service.js
-const { TelegramAlert, SlackAlert } = require('kien-nguyen-support')
+const { TelegramAlert, SlackAlert } = require('@kien2k1/multi-channel-alert')
 
 // Flight-specific Telegram alerts
 const flightTelegram = new TelegramAlert({
@@ -1725,22 +1733,36 @@ Create a webhook client for production.
 
 ## Version History
 
-- **v2.0.1** (2025-10-01): 
-  - 🐛 **Fixed**: Data filtering bug in MultiChannelAlert (`item.field` → `item.key`)
-  - 🎨 **Enhanced**: Mattermost message formatting with emoji titles and code blocks
-  - 🎛️ **Added**: Individual component `strictMode` support (TelegramAlert, SlackAlert, MattermostAlert)
-  - 📝 **Improved**: Cross-platform formatting consistency for JSON objects and curl commands
-  - 🔧 **Added**: Comprehensive data filtering utilities with backward compatibility
-- **v2.0.0** (2025-09-29): Multi-channel alert system, logger-style API, conditional channels
-- **v1.1.1** (2025): Enhanced Telegram formatting, smart ID extraction  
-- **v1.0.0** (2025): Initial release with Telegram bot and logging
+- **v1.0.3** (2025-10-03): 
+  - 🎨 **Mattermost Formatting**: Enhanced markdown support and code block formatting
+  - 🔧 **Improvements**: Better console logging and error handling
+  - 📝 **Code Quality**: Cleaner output and reduced verbose logging
+
+- **v1.0.2** (2025-10-03): 
+  - 🔧 **TypeScript Definitions**: Improved AlertData interface for better flexibility
+  - 📝 **Documentation**: Updated package information and links
+  - 🐛 **Bug Fixes**: Minor fixes and improvements
+
+- **v1.0.1** (2025-10-02): 
+  - 📦 **Package Updates**: Updated package name to `@kien2k1/multi-channel-alert`
+  - 🔗 **Links**: Updated NPM registry links and documentation
+
+- **v1.0.0** (2025-10-02): 
+  - 🚀 **NEW PACKAGE**: Published as `@kien2k1/multi-channel-alert`
+  - 🎯 **MultiChannelAlert System**: Send alerts to 15+ platforms simultaneously
+  - 📱 **Supported Platforms**: Telegram, Slack, Mattermost, Discord, Email, WhatsApp, Zalo, LINE, Viber, Skype, WeChat, RocketChat, Firebase, N8n, Messenger
+  - 🎛️ **Advanced Features**: StrictMode data filtering, individual component support
+  - 🎨 **Rich Formatting**: Platform-specific markdown, emoji titles, code blocks
+  - 📝 **Enhanced Documentation**: Comprehensive setup guides and troubleshooting
+  - ⚡ **Zero Dependencies**: Lightweight package with no runtime dependencies
+  - 🔧 **Legacy Features**: Third-party logging, Telegram webhook management
 
 ## Best Practices
 
 ### 1. Use MultiChannelAlert for New Projects
 ```javascript
 // ✅ Recommended - Multi-channel approach
-const { MultiChannelAlert } = require('kien-nguyen-support')
+const { MultiChannelAlert } = require('@kien2k1/multi-channel-alert')
 const alert = new MultiChannelAlert({ channels: [...] })
 await alert.error(data)
 
@@ -1792,10 +1814,10 @@ const alert = new MultiChannelAlert({
 **1. "Unable to resolve path to module" error:**
 ```bash
 # Make sure package is installed
-npm install kien-nguyen-support
+npm install @kien2k1/multi-channel-alert
 
 # Check import path
-const { MultiChannelAlert } = require('kien-nguyen-support')
+const { MultiChannelAlert } = require('@kien2k1/multi-channel-alert')
 ```
 
 **2. Telegram "Unauthorized" error:**
@@ -1831,6 +1853,9 @@ ISC
 
 nguyenkien2022001@gmail.com
 
-## Repository
+## Links
 
-https://github.com/Trungkien2022001/kien-nguyen-support
+- 📦 **NPM Package**: https://www.npmjs.com/package/@kien2k1/multi-channel-alert
+- 🐙 **Source Code**: https://github.com/Trungkien2022001/kien-nguyen-support
+- 🐛 **Report Issues**: https://github.com/Trungkien2022001/kien-nguyen-support/issues
+- 📧 **Email Support**: nguyenkien2022001@gmail.com

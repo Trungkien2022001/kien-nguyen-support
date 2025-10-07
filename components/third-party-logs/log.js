@@ -97,7 +97,7 @@ function saveProviderLog({
         baseFileName += `_${action}`
     }
     if (time) {
-        baseFileName += `_${time}ms`
+        baseFileName += `_${Math.floor(time)}ms`
     }
     if (random) {
         const randomString = Math.random()

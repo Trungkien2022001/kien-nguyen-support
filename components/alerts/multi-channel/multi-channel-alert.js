@@ -156,16 +156,16 @@ class MultiChannelAlert {
                     config: finalConfig
                 })
 
-                console.log(`MultiChannelAlert: Initialized ${type} channel`)
+                // console.log(`MultiChannelAlert: Initialized ${type} channel`)
             } catch (error) {
-                console.error(`MultiChannelAlert: Failed to initialize channel at index ${index}:`, error.message)
+                // console.error(`MultiChannelAlert: Failed to initialize channel at index ${index}:`, error.message)
                 if (!this.failSilently) {
                     throw error
                 }
             }
         })
 
-        console.log(`MultiChannelAlert: Successfully initialized ${this.channels.length} channels`)
+        // console.log(`MultiChannelAlert: Successfully initialized ${this.channels.length} channels`)
     }
 
     /**
