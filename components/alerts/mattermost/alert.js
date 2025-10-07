@@ -60,33 +60,69 @@ function buildMattermostMessage(
 
     // Handle specific field configurations first
     if (specific && specific.length > 0) {
+        // Create a map for quick lookup of specific configurations
+        const specificMap = {}
         specific.forEach(fieldConfig => {
-            const value = data[fieldConfig.key]
-            if (value != null) {
-                const label =
-                    fieldConfig.title || fieldConfig.label || fieldConfig.key
+            specificMap[fieldConfig.key] = fieldConfig
+        })
 
-                // Special formatting for different data types
-                if (typeof value === 'object') {
-                    lines.push(`**${label}:**`)
-                    lines.push('```json')
-                    lines.push(JSON.stringify(value, null, 2))
-                    lines.push('```')
-                } else if (
-                    fieldConfig.key === 'curl' ||
-                    fieldConfig.key === 'curl_command'
-                ) {
-                    lines.push(`**${label}:**`)
-                    lines.push('```bash')
-                    lines.push(value)
-                    lines.push('```')
-                } else if (fieldConfig.markdown) {
-                    lines.push(`**${label}:**`)
-                    lines.push('```')
-                    lines.push(value)
-                    lines.push('```')
+        // Display all fields in data object
+        Object.keys(data).forEach(key => {
+            if (data[key] != null) {
+                const value = data[key]
+                const fieldConfig = specificMap[key]
+
+                if (fieldConfig) {
+                    // Use specific configuration
+                    const label =
+                        fieldConfig.title ||
+                        fieldConfig.label ||
+                        fieldConfig.key
+
+                    // Special formatting for different data types
+                    if (typeof value === 'object') {
+                        lines.push(`**${label}:**`)
+                        lines.push('```json')
+                        lines.push(JSON.stringify(value, null, 2))
+                        lines.push('```')
+                    } else if (
+                        fieldConfig.key === 'curl' ||
+                        fieldConfig.key === 'curl_command'
+                    ) {
+                        lines.push(`**${label}:**`)
+                        lines.push('```bash')
+                        lines.push(value)
+                        lines.push('```')
+                    } else if (fieldConfig.markdown) {
+                        lines.push(`**${label}:**`)
+                        lines.push('```')
+                        lines.push(value)
+                        lines.push('```')
+                    } else {
+                        lines.push(`**${label}:** ${value}`)
+                    }
                 } else {
-                    lines.push(`**${label}:** ${value}`)
+                    // Use default formatting for fields not in specific config
+                    const defaultFormatting = () => {
+                        if (typeof value === 'object') {
+                            lines.push(`**${key}:**`)
+                            lines.push('```json')
+                            lines.push(JSON.stringify(value, null, 2))
+                            lines.push('```')
+                        } else if (key === 'curl' || key === 'curl_command') {
+                            lines.push(`**${key}:**`)
+                            lines.push('```bash')
+                            lines.push(value)
+                            lines.push('```')
+                        } else {
+                            lines.push(`**${key}:**`)
+                            lines.push('```')
+                            lines.push(value)
+                            lines.push('```')
+                        }
+                    }
+
+                    defaultFormatting()
                 }
             }
         })
@@ -116,7 +152,7 @@ function buildMattermostMessage(
         })
     }
 
-    lines.push('------------------------')
+    lines.push('\n------------------------')
 
     return { text: lines.join('\n') }
 }
@@ -127,6 +163,7 @@ function buildMattermostMessage(
  * @param {Object} options - Mattermost config
  * @returns {Object} Mattermost payload
  */
+
 function buildMattermostPayload(data, options) {
     const {
         beauty = true,

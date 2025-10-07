@@ -57,7 +57,7 @@ npm install @kien2k1/multi-channel-alert
 
 ### 📦 Package Information
 - **Package Name:** `@kien2k1/multi-channel-alert`
-- **Version:** `1.0.3`
+- **Version:** `1.0.5`
 - **Size:** 57.3 kB (326.3 kB unpacked)
 - **Dependencies:** Zero runtime dependencies
 - **NPM Registry:** https://www.npmjs.com/package/@kien2k1/multi-channel-alert
@@ -1773,6 +1773,13 @@ Create a webhook client for production.
 - **PRODUCTION**: Production environment
 
 ## Version History
+
+- **v1.0.5** (2025-10-07): 
+  - 🏥 **Health Check Enhancement**: Improved field configuration and emoji display consistency
+  - 🎨 **Mattermost Formatting Fix**: Fixed last line enlargement issue in health check messages
+  - 🔧 **Field Management**: Enhanced `_ensureHealthCheckFields` method to update existing field configurations
+  - 📊 **Smart Configuration**: Health check fields now properly override existing configurations with correct markdown settings
+  - 🐛 **Bug Fixes**: Resolved emoji display inconsistencies across different platforms
 
 - **v1.0.3** (2025-10-03): 
   - 🎨 **Mattermost Formatting**: Enhanced markdown support and code block formatting

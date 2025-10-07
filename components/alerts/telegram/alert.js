@@ -28,38 +28,85 @@ function buildTelegramMessage(data, beauty = true, specific = []) {
     const lines = []
 
     if (specific && specific.length > 0) {
-        // Use specific field configurations
+        // Create a map for quick lookup of specific configurations
+        const specificMap = {}
         specific.forEach(field => {
-            const { key, title, markdown = beauty } = field
+            if (field.key) {
+                specificMap[field.key] = field
+            }
+        })
+
+        // Process all fields in data
+        Object.keys(data).forEach(key => {
             const value = data[key]
 
             if (value !== undefined && value !== null) {
-                // Format value using printJson utility
-                let displayValue = value
-                if (typeof value === 'object') {
-                    displayValue = printJson(value)
-                } else if (
-                    typeof value === 'string' &&
-                    ['stack', 'stack_trace'].includes(key)
-                ) {
-                    // Use printStack for error stack traces
-                    displayValue = printStack(value)
-                }
+                // Skip functions
+                if (typeof value === 'function') return
 
-                if (markdown) {
-                    // Use Telegram Markdown format like telegram-bot: **bold**
-                    lines.push(`**${title}:**`)
-                    lines.push(`\`\`\``)
-                    lines.push(`${displayValue}`)
-                    lines.push(`\`\`\``)
+                const fieldConfig = specificMap[key]
+
+                if (fieldConfig) {
+                    // Use specific field configuration
+                    const { title, markdown = beauty } = fieldConfig
+
+                    // Format value using printJson utility
+                    let displayValue = value
+                    if (typeof value === 'object') {
+                        displayValue = printJson(value)
+                    } else if (
+                        typeof value === 'string' &&
+                        ['stack', 'stack_trace'].includes(key)
+                    ) {
+                        displayValue = printStack(value)
+                    }
+
+                    if (markdown) {
+                        lines.push(`**${title}:**`)
+                        lines.push(`\`\`\``)
+                        lines.push(`${displayValue}`)
+                        lines.push(`\`\`\``)
+                    } else {
+                        lines.push(`${title}: ${displayValue}`)
+                    }
                 } else {
-                    // Plain text, no formatting
-                    lines.push(`${title}: ${displayValue}`)
+                    // Use default formatting for fields not in specific
+                    let displayValue = value
+                    if (typeof value === 'object') {
+                        displayValue = printJson(value)
+                    } else if (
+                        typeof value === 'string' &&
+                        ['stack', 'stack_trace'].includes(key)
+                    ) {
+                        displayValue = printStack(value)
+                    }
+
+                    // Auto-generate title from key
+                    const title = key
+                        .replace(/_/g, ' ')
+                        .replace(/\b\w/g, l => l.toUpperCase())
+
+                    if (beauty) {
+                        if (typeof value === 'object') {
+                            lines.push(`📋 *${escapeMarkdown(title)}*:`)
+                            lines.push(`\`\`\`json`)
+                            lines.push(escapeMarkdown(displayValue))
+                            lines.push(`\`\`\``)
+                        } else {
+                            lines.push(
+                                `📝 *${escapeMarkdown(
+                                    title
+                                )}*: \`${escapeMarkdown(displayValue)}\``
+                            )
+                        }
+                    } else {
+                        lines.push(`${title}: ${displayValue}`)
+                    }
                 }
             }
         })
     } else {
-        // Auto-generate from all object keys
+        // Auto-generate from all object keys (original logic)
         Object.keys(data).forEach(key => {
             const value = data[key]
 
@@ -117,17 +164,44 @@ function buildSimpleMessage(data, specific = []) {
     const lines = []
 
     if (specific && specific.length > 0) {
-        // Use specific field configurations
+        // Create a map for quick lookup of specific configurations
+        const specificMap = {}
         specific.forEach(field => {
-            const { key, title } = field
+            if (field.key) {
+                specificMap[field.key] = field
+            }
+        })
+
+        // Process all fields in data
+        Object.keys(data).forEach(key => {
             const value = data[key]
 
-            if (value !== undefined && value !== null) {
-                lines.push(`${title}: ${value}`)
+            if (
+                value !== undefined &&
+                value !== null &&
+                typeof value !== 'function'
+            ) {
+                const fieldConfig = specificMap[key]
+
+                if (fieldConfig) {
+                    // Use specific field configuration
+                    const { title } = fieldConfig
+                    lines.push(`${title}: ${value}`)
+                } else {
+                    // Use default formatting for fields not in specific
+                    const title = key
+                        .replace(/_/g, ' ')
+                        .replace(/\b\w/g, l => l.toUpperCase())
+                    const displayValue =
+                        typeof value === 'object'
+                            ? JSON.stringify(value)
+                            : value
+                    lines.push(`${title}: ${displayValue}`)
+                }
             }
         })
     } else {
-        // Auto-generate from all object keys
+        // Auto-generate from all object keys (original logic)
         Object.keys(data).forEach(key => {
             const value = data[key]
 

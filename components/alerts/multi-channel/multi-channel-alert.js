@@ -184,12 +184,22 @@ class MultiChannelAlert {
             status: 'HEALTHY',
             service: this.service,
             environment: this.environment,
-            channels_count: this.channels.length,
-            timestamp,
-            health_check: true
+            timestamp
         }
 
         try {
+            // Always ensure health check fields are in specific config for proper emoji display
+            const healthCheckFields = [
+                { key: 'message', title: '💬 Message', markdown: true },
+                { key: 'status', title: '📊 Status', markdown: true },
+                { key: 'service', title: '🔧 Service', markdown: false },
+                { key: 'environment', title: '🌍 Environment', markdown: false },
+                { key: 'timestamp', title: '⏰ Timestamp', markdown: false }
+            ]
+
+            // Update global specific and channel-specific configs
+            this._ensureHealthCheckFields(healthCheckFields)
+
             const result = await this._sendToAllChannels('info', healthCheckData)
 
             return result
@@ -200,6 +210,53 @@ class MultiChannelAlert {
 
             return null
         }
+    }
+
+    /**
+     * Ensure health check fields are included in specific configurations
+     * @param {Array} healthCheckFields - Health check field configurations
+     * @private
+     */
+    _ensureHealthCheckFields(healthCheckFields) {
+        // Update global specific configuration
+        if (!this.globalSpecific) {
+            this.globalSpecific = []
+        }
+
+        healthCheckFields.forEach(field => {
+            // Check if field already exists in global specific
+            const existingFieldIndex = this.globalSpecific.findIndex(
+                existing => existing.key === field.key || existing.field === field.key
+            )
+
+            if (existingFieldIndex !== -1) {
+                // Update existing field with health check configuration
+                this.globalSpecific[existingFieldIndex] = field
+            } else {
+                // Add new field to global specific
+                this.globalSpecific.push(field)
+            }
+        })
+
+        // Update each channel's specific configuration if they have their own
+        this.channels.forEach(channel => {
+            if (channel.config.specific && Array.isArray(channel.config.specific)) {
+                healthCheckFields.forEach(field => {
+                    // Check if field already exists in channel specific
+                    const existingFieldIndex = channel.config.specific.findIndex(
+                        existing => existing.key === field.key || existing.field === field.key
+                    )
+
+                    if (existingFieldIndex !== -1) {
+                        // Update existing field with health check configuration
+                        channel.config.specific[existingFieldIndex] = field
+                    } else {
+                        // Add new field to channel specific
+                        channel.config.specific.push(field)
+                    }
+                })
+            }
+        })
     }
 
     /**
