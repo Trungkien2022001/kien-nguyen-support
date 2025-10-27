@@ -289,12 +289,13 @@ function buildTelegramPayload(data, options) {
         chatId,
         messageThreadIds = {},
         service = 'hotel',
-        type = 'error',
-        action = 'all',
         beauty = true,
         specific = [],
         disableNotification = false
     } = options
+
+    const type = data.type || 'system'
+    const action = data.metric || data.action || 'all'
 
     // Get thread ID using nested detection
     const messageThreadId = detectNestedThreadId({
