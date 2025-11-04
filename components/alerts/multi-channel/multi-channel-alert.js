@@ -76,6 +76,7 @@ class MultiChannelAlert {
      * @param {Array} config.specific Global specific field configurations
      * @param {boolean} config.strictMode If true, only log keys defined in specific array
      * @param {boolean} config.healthCheck If true, send hello message to all channels after initialization
+     * @param {string} config.healthCheckMessage Custom message for health check (default: '✅ MultiChannelAlert Health Check')
      */
     constructor(config) {
         const {
@@ -86,7 +87,8 @@ class MultiChannelAlert {
             beauty = true,
             specific = [],
             strictMode = false,
-            healthCheck = false
+            healthCheck = false,
+            healthCheckMessage = '✅ MultiChannelAlert Health Check'
         } = config
 
         this.channels = []
@@ -99,6 +101,7 @@ class MultiChannelAlert {
         this.globalSpecific = specific
         this.strictMode = strictMode
         this.healthCheck = healthCheck
+        this.healthCheckMessage = healthCheckMessage
 
         // Initialize all configured alert channels
         this._initializeChannels(channels)
@@ -180,7 +183,7 @@ class MultiChannelAlert {
     async _sendHealthCheckMessage() {
         const timestamp = new Date().toISOString()
         const healthCheckData = {
-            message: '✅ MultiChannelAlert Health Check',
+            message: this.healthCheckMessage,
             status: 'HEALTHY',
             service: this.service,
             environment: this.environment,

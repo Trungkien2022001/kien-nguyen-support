@@ -57,8 +57,8 @@ npm install @kien2k1/multi-channel-alert
 
 ### 📦 Package Information
 - **Package Name:** `@kien2k1/multi-channel-alert`
-- **Version:** `1.0.5`
-- **Size:** 57.3 kB (326.3 kB unpacked)
+- **Version:** `1.0.7`
+- **Size:** 59.8 kB (343.7 kB unpacked)
 - **Dependencies:** Zero runtime dependencies
 - **NPM Registry:** https://www.npmjs.com/package/@kien2k1/multi-channel-alert
 
@@ -403,7 +403,8 @@ const multiAlert = new MultiChannelAlert({
     service: 'hotel',
     environment: 'PRODUCTION',
     failSilently: true,  // Continue if some channels fail
-    healthCheck: true    // 🏥 NEW: Send hello message to test all channels
+    healthCheck: true,   // 🏥 NEW: Send hello message to test all channels
+    healthCheckMessage: '🚀 Service Started - Health Check'  // 🆕 Custom health check message
 })
 
 // Send alerts using logger-style methods
@@ -508,13 +509,14 @@ await multiAlert.error(alertData)
 Test all channels connectivity automatically or manually:
 
 ```javascript
-// 🏥 Automatic health check on initialization
+// 🏥 Automatic health check on initialization with custom message
 const multiAlert = new MultiChannelAlert({
     channels: [
         { type: 'telegram', config: { botToken: 'xxx', chatId: 'yyy' } },
         { type: 'slack', config: { webhookUrl: 'zzz' } }
     ],
-    healthCheck: true  // Send "✅ MultiChannelAlert Health Check" to all channels
+    healthCheck: true,  // Send health check message to all channels
+    healthCheckMessage: '🚀 Hotel Service Started - System Online'  // 🆕 Custom message
 })
 
 // Console output:
@@ -1538,6 +1540,7 @@ Create a multi-channel alert instance.
 - `environment` (string, optional): Default environment ('DEV', 'STAGING', 'PRODUCTION')
 - `failSilently` (boolean, optional): Don't throw errors if some channels fail (default: true)
 - `healthCheck` (boolean, optional): Send health check message to all channels after initialization (default: false)
+- `healthCheckMessage` (string, optional): Custom message for health check (default: '✅ MultiChannelAlert Health Check')
 
 **Channel Configuration:**
 ```javascript
@@ -1773,6 +1776,17 @@ Create a webhook client for production.
 - **PRODUCTION**: Production environment
 
 ## Version History
+
+- **v1.0.7** (2025-11-04): 
+  - 🎯 **Custom Health Check Messages**: Added `healthCheckMessage` parameter to customize health check notifications
+  - 🚀 **Flexible Configuration**: Default health check message can now be overridden with custom text (e.g., "🚀 Hotel Service Started - System Online")
+  - 📚 **Enhanced Documentation**: Updated examples and TypeScript definitions for healthCheckMessage feature
+  - 🛠️ **Better Startup Messages**: More meaningful health check messages for different services and environments
+
+- **v1.0.6** (2025-10-27):
+  - 🔧 **Telegram Alert Improvements**: Enhanced alert logic and message formatting in Telegram component
+  - 📦 **Package Optimization**: Improved package structure and dependencies
+  - 🐛 **Bug Fixes**: Various minor fixes and performance improvements
 
 - **v1.0.5** (2025-10-07): 
   - 🏥 **Health Check Enhancement**: Improved field configuration and emoji display consistency

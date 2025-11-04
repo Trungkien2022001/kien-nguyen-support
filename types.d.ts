@@ -127,6 +127,8 @@ declare module '@kien2k1/multi-channel-alert' {
     failSilently?: boolean;
     /** Send health check message to all channels after initialization (default: false) */
     healthCheck?: boolean;
+    /** Custom message for health check (default: '✅ MultiChannelAlert Health Check') */
+    healthCheckMessage?: string;
   }
 
   export interface ChannelConfig {
