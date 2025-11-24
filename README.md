@@ -57,9 +57,10 @@ npm install @kien2k1/multi-channel-alert
 
 ### 📦 Package Information
 - **Package Name:** `@kien2k1/multi-channel-alert`
-- **Version:** `1.0.7`
+- **Version:** `1.0.8`
 - **Size:** 59.8 kB (343.7 kB unpacked)
 - **Dependencies:** Zero runtime dependencies
+- **Node.js Support:** v8.0.0+ (Legacy Node.js compatible)
 - **NPM Registry:** https://www.npmjs.com/package/@kien2k1/multi-channel-alert
 
 ## 🌟 Why MultiChannelAlert?
@@ -116,7 +117,7 @@ npm install @kien2k1/multi-channel-alert
 
 ## ⚡ Performance & Optimization
 
-- **Zero Dependencies**: No external runtime dependencies - uses only Node.js built-ins
+- **Zero Dependencies**: No external runtime dependencies - uses only Node.js built-ins (compatible with Node.js v8+)
 - **85% Smaller Package**: Reduced from ~585KB to ~85KB by replacing axios & moment.js
 - **Native HTTP Client**: Custom implementation with axios-compatible API
 - **Custom DateTime Utils**: Native Date formatting without external libraries
@@ -1776,6 +1777,12 @@ Create a webhook client for production.
 - **PRODUCTION**: Production environment
 
 ## Version History
+
+- **v1.0.8** (2025-11-24): 
+  - 🔧 **Legacy Node.js Support**: Enhanced compatibility with Node.js v8+ by replacing `Promise.allSettled` with `Promise.all`
+  - 📦 **Backwards Compatibility**: Now supports older Node.js versions (v8.0.0+) for legacy systems
+  - 🛠️ **Improved Error Handling**: Better promise handling for multi-channel operations in older environments
+  - 📚 **Documentation Updates**: Added Node.js version compatibility information
 
 - **v1.0.7** (2025-11-04): 
   - 🎯 **Custom Health Check Messages**: Added `healthCheckMessage` parameter to customize health check notifications

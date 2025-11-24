@@ -95,7 +95,7 @@ class MultiChannelAlert {
         this.service = service
         this.environment = environment
         this.failSilently = failSilently
-        
+
         // Global settings
         this.globalBeauty = beauty
         this.globalSpecific = specific
@@ -141,7 +141,7 @@ class MultiChannelAlert {
 
                 if (!type) {
                     console.warn(`MultiChannelAlert: Channel at index ${index} missing 'type' property`)
-                    
+
                     return
                 }
 
@@ -149,7 +149,7 @@ class MultiChannelAlert {
 
                 if (!AlertClass) {
                     console.warn(`MultiChannelAlert: Unknown alert type '${type}' at index ${index}`)
-                    
+
                     return
                 }
 
@@ -303,7 +303,7 @@ class MultiChannelAlert {
                 // Filter data based on channel's specific configuration or global specific
                 const channelSpecific = channel.config.specific || this.globalSpecific
                 const filteredData = this._filterDataBySpecific(data, channelSpecific)
-                
+
                 const result = await channel.instance[method](filteredData)
                 results.push({
                     type: channel.type,
@@ -331,7 +331,9 @@ class MultiChannelAlert {
             }
         })
 
-        await Promise.allSettled(promises)
+        // await Promise.allSettled(promises)
+        // Use Promise.all with error handling for compatibility with older Node.js versions
+        await Promise.all(promises.map(p => p.catch(() => null)))
 
         // Log summary
         const successCount = results.filter(r => r.success).length
@@ -368,12 +370,12 @@ class MultiChannelAlert {
             return data
         }
 
-        const allowedFields = specific.map(item => 
+        const allowedFields = specific.map(item =>
             typeof item === 'string' ? item : (item.key || item.field)  // Support both key and field properties
         )
 
         const filteredData = {}
-        
+
         allowedFields.forEach(field => {
             if (field && Object.prototype.hasOwnProperty.call(data, field)) {
                 filteredData[field] = data[field]
