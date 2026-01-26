@@ -57,8 +57,8 @@ npm install @kien2k1/multi-channel-alert
 
 ### 📦 Package Information
 - **Package Name:** `@kien2k1/multi-channel-alert`
-- **Version:** `1.0.8`
-- **Size:** 59.8 kB (343.7 kB unpacked)
+- **Version:** `1.0.9`
+- **Size:** 60.5 kB (346.0 kB unpacked)
 - **Dependencies:** Zero runtime dependencies
 - **Node.js Support:** v8.0.0+ (Legacy Node.js compatible)
 - **NPM Registry:** https://www.npmjs.com/package/@kien2k1/multi-channel-alert
