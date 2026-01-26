@@ -167,7 +167,10 @@ function buildLogMeta(options) {
                   code: options.supplier.code,
                   source_id: options.supplier.source_id,
                   contract_id: options.supplier.contract_id,
-                  user_name: options.supplier.user_name
+                  user_name:
+                      options.supplier.user_name ||
+                      options.supplier.name ||
+                      options.supplier.username
               })
             : null,
         metric: options.metric,
