@@ -224,6 +224,33 @@ function buildSimpleMessage(data, specific = []) {
 }
 
 /**
+ * Truncate message to fit Telegram's max length (4096 chars).
+ * In Markdown mode, also closes any dangling ``` code block so Telegram
+ * doesn't reject the payload with a parse error.
+ * @param {string} text
+ * @param {boolean} beauty - true when parse_mode=Markdown
+ * @returns {string}
+ */
+function truncateMessage(text, beauty) {
+    const max = TELEGRAM.MAX_MESSAGE_LENGTH
+    if (typeof text !== 'string' || text.length <= max) return text
+
+    const suffix = '\n...(truncated)'
+    // Reserve space for suffix and a possible trailing ``` (4 chars incl. newline)
+    const reserve = suffix.length + (beauty ? 4 : 0)
+    let truncated = text.slice(0, max - reserve)
+
+    if (beauty) {
+        const fenceCount = (truncated.match(/```/g) || []).length
+        if (fenceCount % 2 !== 0) {
+            truncated += '\n```'
+        }
+    }
+
+    return truncated + suffix
+}
+
+/**
  * Detect message thread ID from nested config
  * @param {Object} params - Detection parameters
  * @param {string} params.service - Service type (hotel, flight, etc.)
@@ -306,9 +333,11 @@ function buildTelegramPayload(data, options) {
     })
 
     // Build message text
-    const text = beauty
+    const rawText = beauty
         ? buildTelegramMessage(data, true, specific)
         : buildSimpleMessage(data, specific)
+
+    const text = truncateMessage(rawText, beauty)
 
     const payload = {
         chat_id: chatId,

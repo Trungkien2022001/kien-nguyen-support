@@ -57,11 +57,16 @@ npm install @kien2k1/multi-channel-alert
 
 ### 📦 Package Information
 - **Package Name:** `@kien2k1/multi-channel-alert`
-- **Version:** `1.0.9`
+- **Version:** `1.0.10`
 - **Size:** 60.5 kB (346.0 kB unpacked)
 - **Dependencies:** Zero runtime dependencies
 - **Node.js Support:** v8.0.0+ (Legacy Node.js compatible)
 - **NPM Registry:** https://www.npmjs.com/package/@kien2k1/multi-channel-alert
+
+### ✨ What's New in v1.0.10
+- ✂️ **Telegram Message Truncation**: Auto-truncate Telegram messages exceeding the 4096-char API limit (previously caused `Bad Request: message is too long`)
+- 🛡️ **Safe Markdown Cutoff**: Dangling ``` ``` ``` code fences are auto-closed when truncating under `parse_mode=Markdown`, avoiding parse-error rejections
+- 🔧 **Shared Constant**: New `TELEGRAM.MAX_MESSAGE_LENGTH = 4096` in `constants/index.js`
 
 ## 🌟 Why MultiChannelAlert?
 
@@ -1777,6 +1782,11 @@ Create a webhook client for production.
 - **PRODUCTION**: Production environment
 
 ## Version History
+
+- **v1.0.10** (2026-05-15):
+  - ✂️ **Telegram Message Truncation**: Auto-truncate outgoing messages that exceed Telegram's 4096-character limit to prevent `message is too long` errors
+  - 🛡️ **Safe Markdown Cutoff**: When `parse_mode=Markdown`, dangling ``` ``` ``` code fences are auto-closed so Telegram doesn't reject the payload with a parse error
+  - 🔧 **New Constant**: Added `TELEGRAM.MAX_MESSAGE_LENGTH = 4096` for shared reference across the codebase
 
 - **v1.0.8** (2025-11-24): 
   - 🔧 **Legacy Node.js Support**: Enhanced compatibility with Node.js v8+ by replacing `Promise.allSettled` with `Promise.all`

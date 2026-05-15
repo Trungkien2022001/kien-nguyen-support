@@ -22,6 +22,7 @@ module.exports = {
     },
     TELEGRAM: {
         API_BASE_URL: 'https://api.telegram.org/bot',
+        MAX_MESSAGE_LENGTH: 4096,
         PRODUCTS: {
             HOTEL: 'hotel',
             FLIGHT: 'flight',

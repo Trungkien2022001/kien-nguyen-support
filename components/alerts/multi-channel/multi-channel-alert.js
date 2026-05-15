@@ -339,7 +339,7 @@ class MultiChannelAlert {
         const successCount = results.filter(r => r.success).length
         const failureCount = errors.length
 
-        console.log(`MultiChannelAlert.${method}: ${successCount} successful, ${failureCount} failed`)
+        // console.log(`MultiChannelAlert.${method}: ${successCount} successful, ${failureCount} failed`)
 
         if (errors.length > 0 && !this.failSilently) {
             throw new Error(`MultiChannelAlert: ${errors.length} channels failed to send ${method}`)
@@ -467,9 +467,9 @@ class MultiChannelAlert {
         this.channels = this.channels.filter(channel => channel.type !== type.toLowerCase())
         const removedCount = initialCount - this.channels.length
 
-        if (removedCount > 0) {
-            console.log(`MultiChannelAlert: Removed ${removedCount} ${type} channel(s)`)
-        }
+        // if (removedCount > 0) {
+        //     console.log(`MultiChannelAlert: Removed ${removedCount} ${type} channel(s)`)
+        // }
 
         return removedCount
     }
