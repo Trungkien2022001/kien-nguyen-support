@@ -57,11 +57,15 @@ npm install @kien2k1/multi-channel-alert
 
 ### 📦 Package Information
 - **Package Name:** `@kien2k1/multi-channel-alert`
-- **Version:** `1.0.10`
+- **Version:** `1.0.11`
 - **Size:** 60.5 kB (346.0 kB unpacked)
 - **Dependencies:** Zero runtime dependencies
 - **Node.js Support:** v8.0.0+ (Legacy Node.js compatible)
 - **NPM Registry:** https://www.npmjs.com/package/@kien2k1/multi-channel-alert
+
+### ✨ What's New in v1.0.11
+- 🧹 **Legacy Path Coverage**: Apply the 4096-char truncation to the legacy `TelegramClient` (`components/telegram-bot/alert.js`) too — v1.0.10 only patched the new `TelegramAlert` path
+- 🛡️ **Safe Markdown Cutoff (Legacy)**: Same dangling ``` ``` ``` code-fence auto-close behavior in the legacy `sendMessage` payload builder
 
 ### ✨ What's New in v1.0.10
 - ✂️ **Telegram Message Truncation**: Auto-truncate Telegram messages exceeding the 4096-char API limit (previously caused `Bad Request: message is too long`)
@@ -1782,6 +1786,10 @@ Create a webhook client for production.
 - **PRODUCTION**: Production environment
 
 ## Version History
+
+- **v1.0.11** (2026-05-15):
+  - 🧹 **Legacy TelegramClient Truncation**: Mirror the v1.0.10 4096-char truncation into `components/telegram-bot/alert.js` so the legacy `TelegramClient` path is also safe from `message is too long` rejections
+  - 🛡️ **Safe Markdown Cutoff (Legacy)**: Same dangling ``` ``` ``` code-fence auto-close behavior applied in the legacy payload builder
 
 - **v1.0.10** (2026-05-15):
   - ✂️ **Telegram Message Truncation**: Auto-truncate outgoing messages that exceed Telegram's 4096-character limit to prevent `message is too long` errors

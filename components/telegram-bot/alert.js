@@ -252,6 +252,29 @@ function detectMessageThreadId({ service, type, metric, messageThreadIds }) {
 }
 
 /**
+ * Truncate message to fit Telegram's max length (4096).
+ * Always operates under parse_mode=Markdown here, so it also closes any
+ * dangling ``` code fence to avoid parse errors.
+ * @param {string} text
+ * @returns {string}
+ */
+function truncateMessage(text) {
+    const max = TELEGRAM.MAX_MESSAGE_LENGTH
+    if (typeof text !== 'string' || text.length <= max) return text
+
+    const suffix = '\n...(truncated)'
+    const reserve = suffix.length + 4 // room for trailing ``` close
+    let truncated = text.slice(0, max - reserve)
+
+    const fenceCount = (truncated.match(/```/g) || []).length
+    if (fenceCount % 2 !== 0) {
+        truncated += '\n```'
+    }
+
+    return truncated + suffix
+}
+
+/**
  * Build telegram payload with dynamic thread routing
  * @param {Object} logMeta - Log metadata
  * @param {Object} options - Telegram config
@@ -270,7 +293,7 @@ function buildTelegramPayload(logMeta, options) {
 
     return {
         chat_id: chatId,
-        text: buildTelegramMessage(logMeta),
+        text: truncateMessage(buildTelegramMessage(logMeta)),
         message_thread_id: messageThreadId,
         parse_mode: 'Markdown'
     }
