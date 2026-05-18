@@ -57,11 +57,14 @@ npm install @kien2k1/multi-channel-alert
 
 ### 📦 Package Information
 - **Package Name:** `@kien2k1/multi-channel-alert`
-- **Version:** `1.0.11`
+- **Version:** `1.0.12`
 - **Size:** 60.5 kB (346.0 kB unpacked)
 - **Dependencies:** Zero runtime dependencies
 - **Node.js Support:** v8.0.0+ (Legacy Node.js compatible)
 - **NPM Registry:** https://www.npmjs.com/package/@kien2k1/multi-channel-alert
+
+### ✨ What's New in v1.0.12
+- 📝 **Docs**: Commented out the stale Mattermost demo screenshot in the Live Demo section of `README.md` (image link was no longer relevant)
 
 ### ✨ What's New in v1.0.11
 - 🧹 **Legacy Path Coverage**: Apply the 4096-char truncation to the legacy `TelegramClient` (`components/telegram-bot/alert.js`) too — v1.0.10 only patched the new `TelegramAlert` path
@@ -142,7 +145,7 @@ Real-time alerts with rich formatting, ID extraction, and smart routing:
   <img src="http://res.cloudinary.com/trungkien2022001/image/upload/v1759311010/upload/ccphpfenl4k5bdrgxw14.png" alt="Telegram Error Alert" width="350"/>
   <img src="http://res.cloudinary.com/trungkien2022001/image/upload/v1759310992/upload/y59vvrocvng90elwuipr.png" alt="Telegram System Alert" width="350"/>
   <br/>
-  <img src="http://res.cloudinary.com/trungkien2022001/image/upload/v1759310923/upload/brcgfxw2pud8nzkybegt.png" alt="Mattermost Alert Demo" width="350"/>
+  <!-- <img src="http://res.cloudinary.com/trungkien2022001/image/upload/v1759310923/upload/brcgfxw2pud8nzkybegt.png" alt="Mattermost Alert Demo" width="350"/> -->
 </div>
 
 *Live examples showing enhanced formatting, automatic ID extraction, and multi-channel broadcasting*
@@ -1786,6 +1789,9 @@ Create a webhook client for production.
 - **PRODUCTION**: Production environment
 
 ## Version History
+
+- **v1.0.12** (2026-05-18):
+  - 📝 **Docs**: Hide the outdated Mattermost demo screenshot in the Live Demo section by commenting it out in `README.md`
 
 - **v1.0.11** (2026-05-15):
   - 🧹 **Legacy TelegramClient Truncation**: Mirror the v1.0.10 4096-char truncation into `components/telegram-bot/alert.js` so the legacy `TelegramClient` path is also safe from `message is too long` rejections
