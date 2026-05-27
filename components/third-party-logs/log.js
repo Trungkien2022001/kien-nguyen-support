@@ -67,12 +67,17 @@ function saveProviderLog({
     random = false,
     time
 }) {
+    if (!req && !res) {
+        return
+    }
     prepareLogDirectory()
-    const providerReq = tryParseJson(req)
-    const providerRes = tryParseJson(res)
+    const providerReq = req ? tryParseJson(req) : null
+    const providerRes = res ? tryParseJson(res) : null
 
-    const isReqXml = typeof providerReq !== 'object'
-    const isResXml = typeof providerRes !== 'object'
+    const isReqXml =
+        typeof providerReq === 'string' && providerReq.trim().charAt(0) === '<'
+    const isResXml =
+        typeof providerRes === 'string' && providerRes.trim().charAt(0) === '<'
 
     const dateStr = formatDate()
     const timeStr = formatDateTime()
@@ -107,20 +112,24 @@ function saveProviderLog({
         baseFileName += `_${randomString}`
     }
 
-    const extensions = isResXml ? FILE_EXTENSIONS.XML : FILE_EXTENSIONS.JSON
+    const reqExt = isReqXml ? FILE_EXTENSIONS.XML : FILE_EXTENSIONS.JSON
+    const resExt = isResXml ? FILE_EXTENSIONS.XML : FILE_EXTENSIONS.JSON
 
-    const request = `${baseFileName}_${REQUEST_SUFFIX}.${extensions}`
-    const response = `${baseFileName}_${RESPONSE_SUFFIX}.${extensions}`
+    if (req) {
+        const request = `${baseFileName}_${REQUEST_SUFFIX}.${reqExt}`
+        fs.writeFileSync(
+            path.join(logsDir, request),
+            isReqXml ? providerReq : JSON.stringify(providerReq, null, 2)
+        )
+    }
 
-    fs.writeFileSync(
-        path.join(logsDir, request),
-        isReqXml ? providerReq : JSON.stringify(providerReq, null, 2)
-    )
-
-    fs.writeFileSync(
-        path.join(logsDir, response),
-        isResXml ? providerRes : JSON.stringify(providerRes, null, 2)
-    )
+    if (res) {
+        const response = `${baseFileName}_${RESPONSE_SUFFIX}.${resExt}`
+        fs.writeFileSync(
+            path.join(logsDir, response),
+            isResXml ? providerRes : JSON.stringify(providerRes, null, 2)
+        )
+    }
 }
 
 function buildCurl(request) {

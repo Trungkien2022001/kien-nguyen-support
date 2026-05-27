@@ -57,11 +57,16 @@ npm install @kien2k1/multi-channel-alert
 
 ### 📦 Package Information
 - **Package Name:** `@kien2k1/multi-channel-alert`
-- **Version:** `1.0.12`
+- **Version:** `1.1.0`
 - **Size:** 60.5 kB (346.0 kB unpacked)
 - **Dependencies:** Zero runtime dependencies
 - **Node.js Support:** v8.0.0+ (Legacy Node.js compatible)
 - **NPM Registry:** https://www.npmjs.com/package/@kien2k1/multi-channel-alert
+
+### ✨ What's New in v1.1.0
+- 🛡️ **Skip-on-Empty Provider Logs**: `saveProviderLog` no longer writes empty files — if `req` is falsy it skips the request file, if `res` is falsy it skips the response file, and if both are falsy it returns early without creating a log directory
+- 🧠 **Accurate XML/JSON Detection**: File extension (`.xml` vs `.json`) is now decided per-payload by checking if the parsed value is a string starting with `<` — previously any non-object (including JSON primitives like numbers/booleans) was mis-flagged as XML
+- 🧾 **Independent Extensions**: Request and response extensions are computed separately (`reqExt` / `resExt`), so a JSON request paired with an XML response (or vice versa) is saved with the correct extension on each side
 
 ### ✨ What's New in v1.0.12
 - 📝 **Docs**: Commented out the stale Mattermost demo screenshot in the Live Demo section of `README.md` (image link was no longer relevant)
@@ -1789,6 +1794,11 @@ Create a webhook client for production.
 - **PRODUCTION**: Production environment
 
 ## Version History
+
+- **v1.1.0** (2026-05-27):
+  - 🛡️ **Skip-on-Empty Provider Logs**: `saveProviderLog` in `components/third-party-logs/log.js` now skips file writes when the corresponding payload is falsy — empty `req` skips the request file, empty `res` skips the response file, both empty returns early without touching disk
+  - 🧠 **Accurate XML/JSON Detection**: Replace the old `typeof providerXxx !== 'object'` heuristic with a strict check (`typeof === 'string' && trim().charAt(0) === '<'`), so JSON primitives and plain strings are no longer mis-saved as `.xml`
+  - 🧾 **Per-File Extensions**: Compute `reqExt` and `resExt` independently so a JSON request paired with an XML response (or vice versa) gets the correct extension on each file
 
 - **v1.0.12** (2026-05-18):
   - 📝 **Docs**: Hide the outdated Mattermost demo screenshot in the Live Demo section by commenting it out in `README.md`
