@@ -57,11 +57,16 @@ npm install @kien2k1/multi-channel-alert
 
 ### 📦 Package Information
 - **Package Name:** `@kien2k1/multi-channel-alert`
-- **Version:** `1.1.0`
+- **Version:** `1.1.1`
 - **Size:** 60.5 kB (346.0 kB unpacked)
 - **Dependencies:** Zero runtime dependencies
 - **Node.js Support:** v8.0.0+ (Legacy Node.js compatible)
 - **NPM Registry:** https://www.npmjs.com/package/@kien2k1/multi-channel-alert
+
+### ✨ What's New in v1.1.1
+- 📁 **Custom Folder Options**: `saveProviderLog` now accepts optional `folderPath` and `folderName` params — when either is set, logs are written to `<cwd>/<folderPath || '__api-logs__'>/<folderName>/` and the date-based `prepareLogDirectory` rotation is skipped
+- 🔁 **Backwards Compatible**: Without `folderPath`/`folderName`, behavior is identical to v1.1.0 (date-stamped folder under `__api-logs__` with auto-rotation to `api-logs-old`)
+- 🧾 **Types Updated**: `SaveProviderLogOptions` in `types.d.ts` documents the two new optional fields
 
 ### ✨ What's New in v1.1.0
 - 🛡️ **Skip-on-Empty Provider Logs**: `saveProviderLog` no longer writes empty files — if `req` is falsy it skips the request file, if `res` is falsy it skips the response file, and if both are falsy it returns early without creating a log directory
@@ -1794,6 +1799,11 @@ Create a webhook client for production.
 - **PRODUCTION**: Production environment
 
 ## Version History
+
+- **v1.1.1** (2026-05-27):
+  - 📁 **Custom Folder Options**: Add `folderPath` and `folderName` to `saveProviderLog` in `components/third-party-logs/log.js` — providing either skips the date-based `prepareLogDirectory` rotation and writes directly to `<cwd>/<folderPath || '__api-logs__'>/<folderName>/`
+  - 🧾 **Types**: Document the new optional fields in `SaveProviderLogOptions` (`types.d.ts`)
+  - 🔁 **Backwards Compatible**: When both options are omitted, the existing date-stamped folder behavior is preserved
 
 - **v1.1.0** (2026-05-27):
   - 🛡️ **Skip-on-Empty Provider Logs**: `saveProviderLog` in `components/third-party-logs/log.js` now skips file writes when the corresponding payload is falsy — empty `req` skips the request file, empty `res` skips the response file, both empty returns early without touching disk

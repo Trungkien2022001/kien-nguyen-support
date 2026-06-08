@@ -593,6 +593,10 @@ declare module '@kien2k1/multi-channel-alert' {
     random?: boolean;
     /** Processing time in milliseconds */
     time?: number;
+    /** Custom base directory (relative to cwd). When set together with folderName or alone, the date-based prepareDirectory rotation is skipped. Defaults to '__api-logs__' when only folderName is provided. */
+    folderPath?: string;
+    /** Subfolder name created under folderPath (or under '__api-logs__' by default). Providing this also skips the date-based prepareDirectory rotation. */
+    folderName?: string;
   }
 
   /**

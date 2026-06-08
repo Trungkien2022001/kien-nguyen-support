@@ -65,12 +65,35 @@ function saveProviderLog({
     code,
     name,
     random = false,
-    time
+    time,
+    folderPath,
+    folderName
 }) {
     if (!req && !res) {
         return
     }
-    prepareLogDirectory()
+
+    const useCustomDir = Boolean(folderPath || folderName)
+    let logsDir
+    if (useCustomDir) {
+        const baseDir = folderPath || BASE_DIR
+        logsDir = folderName
+            ? path.join(process.cwd(), baseDir, folderName)
+            : path.join(process.cwd(), baseDir)
+    } else {
+        prepareLogDirectory()
+        const dateStr = formatDate()
+        logsDir = path.join(
+            process.cwd(),
+            BASE_DIR,
+            `${LOG_FILE_PREFIX}${dateStr}`
+        )
+    }
+
+    if (!fs.existsSync(logsDir)) {
+        fs.mkdirSync(logsDir, { recursive: true })
+    }
+
     const providerReq = req ? tryParseJson(req) : null
     const providerRes = res ? tryParseJson(res) : null
 
@@ -79,17 +102,7 @@ function saveProviderLog({
     const isResXml =
         typeof providerRes === 'string' && providerRes.trim().charAt(0) === '<'
 
-    const dateStr = formatDate()
     const timeStr = formatDateTime()
-    const logsDir = path.join(
-        process.cwd(),
-        BASE_DIR,
-        `${LOG_FILE_PREFIX}${dateStr}`
-    )
-
-    if (!fs.existsSync(logsDir)) {
-        fs.mkdirSync(logsDir, { recursive: true })
-    }
 
     let baseFileName = `${timeStr}`
     if (code) {
